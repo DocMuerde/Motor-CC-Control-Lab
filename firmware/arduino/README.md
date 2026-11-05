@@ -2,36 +2,83 @@
 
 ## Español
 
-El firmware corre en un **Arduino Uno/Mega** y realiza tres funciones principales:
+### Descripción
 
-1. **Lectura del encoder AS5047P** mediante SPI (14 bits → 16384 posiciones/vuelta).
-2. **Protocolo de comunicación serie** con MATLAB: envía posición angular y recibe la acción de control.
-3. **Generación de PWM** hacia el driver de potencia para mover el motor.
+El firmware corre en un **Arduino UNO** y realiza las siguientes funciones:
 
-### Protocolo de comunicación (ASCII, terminador `\n`)
+1. **Lectura del encoder AS5047P** mediante SPI (14 bits → 16 384 posiciones/vuelta).
+2. **Cálculo de la velocidad angular** como diferencia de posición dividida por Ts.
+3. **Envío a MATLAB** de posición y velocidad a 100 Hz por puerto serie.
+4. **Recepción de la acción de control** enviada por MATLAB.
+5. **Generación de PWM** al driver L298N para mover el motor.
 
-| Dirección | Formato | Ejemplo |
+> **Nota de diseño:** El código incluye un **observador de Luenberger** (identificado con este motor a 12 V) que está implementado y validado, pero se deja desactivado. Si se necesita filtrar la velocidad, se realiza en MATLAB, que es más flexible y no requiere recompilar el firmware. Para activarlo, ver los comentarios en `main/main.ino`.
+
+### Librerías necesarias
+
+Instalar desde el Gestor de Librerías del Arduino IDE:
+
+| Librería | Función |
+|---|---|
+| **AS5047P** | Driver del encoder magnético (SPI) |
+| **MsTimer2** | Temporizador por interrupción (Ts = 10 ms) |
+
+### Protocolo de comunicación serie (binario, 115 200 baud)
+
+**Arduino → MATLAB** (cada Ts = 10 ms, 14 bytes en total):
+
+```
+'V' | float angle (4 B) | float w (4 B) | float pwm (4 B) | '\n'
+```
+
+| Campo | Tipo | Descripción |
 |---|---|---|
-| Arduino → MATLAB | `A:<ángulo_deg>\n` | `A:123.456\n` |
-| MATLAB → Arduino | `C:<pwm_0_255>:<dir_0_1>\n` | `C:180:1\n` |
+| `angle` | float | Posición angular acumulada [°] (sin límite de rango) |
+| `w` | float | Velocidad angular [°/s] |
+| `pwm` | float | Señal de control aplicada (eco para verificación) |
 
-### Pines (Arduino Uno)
+**MATLAB → Arduino** (cada Ts, 4 bytes en total):
+
+```
+'A' | int16_t pwm (2 B) | '\n'
+```
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `pwm` | int16_t | Señal de control ∈ [−255, 255]; signo = dirección |
+
+### Pines (Arduino UNO)
 
 | Función | Pin |
 |---|---|
-| CS encoder (SPI) | D10 |
-| SCK | D13 |
-| MISO | D12 |
-| MOSI | D11 |
-| PWM motor | D9 |
-| Dirección motor | D8 |
-| Enable driver | D7 |
+| CS encoder (SPI) | **D4** |
+| SCK (SPI) | D13 |
+| MISO (SPI) | D12 |
+| MOSI (SPI) | D11 |
+| Canal B encoder | D2 |
+| Canal A encoder | D3 |
+| Índice encoder | A0 |
+| PWM motor (EnA) | D9 |
+| Dirección (Ain1) | D7 |
+| Dirección (Ain2) | D8 |
 
-### Dependencias
-- `SPI.h` — incluida en Arduino IDE (sin instalar nada extra)
+> La frecuencia del PWM en los pines 9 y 10 se eleva a **31 250 Hz** modificando el preescalador del Timer1, para eliminar el ruido audible en el bobinado del motor.
 
 ---
 
 ## English
 
-The firmware runs on **Arduino Uno/Mega** and handles: AS5047P encoder reading (SPI), serial comm protocol with MATLAB, and PWM generation for the motor driver.
+### Description
+
+The firmware runs on **Arduino UNO** and handles: AS5047P encoder reading (SPI at 400 kHz), angular velocity computation, binary serial communication with MATLAB at 100 Hz, and PWM generation for the L298N motor driver.
+
+A **Luenberger observer** is implemented and validated in the code but intentionally left inactive — velocity filtering is done in MATLAB for flexibility. To enable it, see comments in `main/main.ino`.
+
+### Required Libraries
+
+Install from Arduino IDE Library Manager: **AS5047P** and **MsTimer2**.
+
+### Binary Serial Protocol (115 200 baud)
+
+**Arduino → MATLAB** (14 bytes): `'V'` + 3×float (angle, ω, pwm) + `'\n'`  
+**MATLAB → Arduino** (4 bytes): `'A'` + int16_t (pwm ∈ [−255, 255]) + `'\n'`
