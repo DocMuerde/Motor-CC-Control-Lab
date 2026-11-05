@@ -23,7 +23,7 @@
      2. Calcular la velocidad angular (diferencia de posición / Ts).
      3. Enviar posición y velocidad a MATLAB por puerto serie (100 Hz).
      4. Recibir la señal de control (PWM con signo) desde MATLAB.
-     5. Aplicar dicha señal al driver L298N para mover el motor.
+     5. Aplicar dicha señal al driver TB6612FNG para mover el motor.
 
    El código incluye además un observador de Luenberger (comentado) que puede
    activarse para estimar velocidad filtrada en lugar de la diferencia cruda.
@@ -96,7 +96,7 @@
 
 // ─── Pines ──────────────────────────────────────────────────────────────────
 #define CS   4   // Chip Select del encoder AS5047P (SPI)
-#define EnA  9   // Enable (PWM) del canal A del driver L298N
+#define EnA  9   // Enable (PWM) del canal A del driver TB6612FNG
 #define Ain1 7   // Control de dirección motor (pin 1)
 #define Ain2 8   // Control de dirección motor (pin 2)
 #define EnB  10  // Enable (PWM) del canal B del driver (no usado)
@@ -262,7 +262,7 @@ void loop()
 
 
 // =============================================================================
-// set_speed — Aplica una señal de control al driver L298N
+// set_speed — Aplica una señal de control al driver TB6612FNG
 // =============================================================================
 // Parámetro v: PWM con signo, v ∈ [−255, 255]
 //   v > 0 → motor gira en sentido directo

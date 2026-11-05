@@ -27,7 +27,7 @@ T_exp = 10;      % Duración del experimento [s]
 
 ### Requisitos
 - MATLAB R2020b o superior
-- Instrument Control Toolbox (para `serialport`)
+- **Instrument Control Toolbox** (única toolbox necesaria — para `serialport`)
 
 ---
 

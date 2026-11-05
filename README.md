@@ -20,7 +20,7 @@ El equipo permite implementar y validar experimentalmente distintas estrategias 
 | Componente | Modelo | Descripción |
 |---|---|---|
 | Motor | Maxon RE / EC | Motor CC con reductora planetaria |
-| Driver | L298N (o similar) | Puente en H para control de corriente |
+| Driver | Toshiba TB6612FNG | Driver dual de motor, 1.2 A cont. / 3 A pico |
 | Encoder | ams AS5047P | Encoder magnético 14 bits, lado de carga |
 | Microcontrolador | Arduino (Uno / Mega) | Adquisición y protocolo de comunicaciones |
 | Software de control | MATLAB / Simulink | Cálculo de la acción de control en PC |
@@ -116,7 +116,7 @@ The rig allows implementing and experimentally validating different control stra
 | Component | Model | Description |
 |---|---|---|
 | Motor | Maxon RE / EC | DC motor with planetary gearbox |
-| Driver | L298N (or similar) | H-bridge for current control |
+| Driver | Toshiba TB6612FNG | Dual motor driver, 1.2 A cont. / 3 A peak |
 | Encoder | ams AS5047P | 14-bit magnetic encoder, load side |
 | Microcontroller | Arduino (Uno / Mega) | Data acquisition and comm. protocol |
 | Control software | MATLAB / Simulink | Control law computation on PC |

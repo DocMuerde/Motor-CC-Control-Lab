@@ -18,7 +18,7 @@ La placa centraliza las conexiones entre Arduino, driver y encoder AS5047P.
 | Parámetro | Valor |
 |---|---|
 | Tensión de alimentación motor | 12–24 V DC |
-| Corriente máxima | 2 A |
+| Corriente máxima | 1.2 A cont. / 3 A pico |
 | Tensión lógica | 5 V (Arduino) |
 | Capas | 2 |
 
@@ -26,4 +26,4 @@ La placa centraliza las conexiones entre Arduino, driver y encoder AS5047P.
 
 ## English
 
-PCB centralising connections between Arduino, motor driver (L298N) and AS5047P encoder. Gerber files in `gerber/` are ready for JLCPCB, PCBWay or Eurocircuits.
+PCB centralising connections between Arduino, motor driver (TB6612FNG) and AS5047P encoder. Gerber files in `gerber/` are ready for JLCPCB, PCBWay or Eurocircuits.
