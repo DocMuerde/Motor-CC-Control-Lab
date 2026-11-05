@@ -1,0 +1,42 @@
+# ============================================================
+#  .gitignore — Motor-CC-Control-Lab
+# ============================================================
+
+# --- Arduino IDE ---
+*.elf
+*.hex
+*.bin
+*.map
+build/
+*.bak
+*.tmp
+
+# --- MATLAB ---
+*.asv
+*.m~
+slprj/
+*.slxc
+*.mex*
+*.mat
+results/
+
+# --- KiCad ---
+*-backups/
+*.kicad_prl
+fp-info-cache
+*.lock
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editores ---
+.vscode/
+.idea/
+*.swp
+*~
+
+# --- Python ---
+__pycache__/
+*.py[cod]
