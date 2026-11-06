@@ -1,6 +1,10 @@
 # Motor CC — Equipo de Prácticas de Control / DC Motor Control Lab
 
 <p align="center">
+  <img src="docs/images/equipo_render.png" alt="Render del equipo de prácticas" width="600"/>
+</p>
+
+<p align="center">
   <a href="#español">🇪🇸 Español</a> &nbsp;|&nbsp;
   <a href="#english">🇬🇧 English</a>
 </p>
