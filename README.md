@@ -17,7 +17,10 @@
 
 Este repositorio contiene todo el material necesario para montar y utilizar el **equipo de prácticas de control de un motor de corriente continua** desarrollado en el Departamento de Ingeniería de Sistemas y Automática de la Universidad de Sevilla (GEPOC).
 
-El equipo está diseñado para ser **preciso, robusto y fácil de usar en el laboratorio**:
+> **¿Por qué este equipo?**  
+> No todos los equipos de laboratorio son iguales. Este se ha diseñado desde cero eligiendo los mejores componentes disponibles para cada función: un encoder magnético sin contacto de **14 bits**, un motor **Maxon** de precisión aeroespacial y un protocolo de comunicaciones propio que hace que conectar MATLAB/Simulink sea cuestión de minutos. El resultado es una plataforma donde la señal habla por sí sola — sin ruido artificial, sin fricciones parásitas, sin restricciones de toolboxes — y en la que el estudiante puede centrarse en el control, no en la electrónica.
+
+El equipo destaca en cuatro aspectos clave:
 
 - 🎯 **Alta resolución, señal limpia, sin fricción.** El encoder magnético **ams AS5047P** ofrece **14 bits de resolución** (16 384 pasos/vuelta). La medida de posición angular es extremadamente limpia, con un nivel de ruido prácticamente inapreciable. La velocidad se obtiene por derivación numérica de la posición, por lo que sí presenta algo más de ruido — fácilmente tratable con un filtro en MATLAB. Todo esto sin introducir ningún tipo de fricción en el eje, a diferencia de los encoders ópticos de contacto.
 
@@ -49,11 +52,11 @@ El equipo está diseñado para ser **preciso, robusto y fácil de usar en el lab
   │  · Lee encoder AS5047P (SPI)    │
   │  · Envía posición a MATLAB      │
   │  · Recibe acción de control     │
-  │  · Genera PWM → Driver L298N    │
+  │  · Genera PWM → TB6612FNG        │
   └────────────┬────────────────────┘
                │ PWM + dirección
                ▼
-           Driver L298N
+           TB6612FNG (driver)
                │
                ▼
         Motor Maxon + reductora
@@ -121,7 +124,10 @@ Contacto: [ialvarado@us.es](mailto:ialvarado@us.es)
 
 This repository contains all the material needed to assemble and use the **DC motor control lab setup** developed at the University of Seville (GEPOC).
 
-The rig is designed to be **accurate, robust and easy to use in the lab**:
+> **Why this rig?**  
+> Not all lab setups are created equal. This one was designed from scratch with the best available component for each job: a **14-bit** contactless magnetic encoder, an aerospace-grade **Maxon** precision motor, and a custom communication protocol that gets MATLAB/Simulink running in minutes. The result is a platform where the signals speak for themselves — no artificial noise, no parasitic friction, no toolbox dependencies — allowing students to focus on control design, not wiring.
+
+The rig stands out in four key areas:
 
 - 🎯 **High resolution, clean signal, zero friction.** The **ams AS5047P** magnetic encoder delivers **14-bit resolution** (16 384 steps/rev). The angular position signal is exceptionally clean, with virtually no measurable noise. Velocity is obtained by numerical differentiation of position, so it carries somewhat more noise — easily handled with a filter in MATLAB. All of this with zero mechanical friction on the shaft, unlike contact optical encoders.
 
