@@ -26,7 +26,7 @@ El equipo destaca en cuatro aspectos clave:
 
 - ⚙️ **Motor de calidad profesional.** El motor **Maxon A-max 22** es un motor DC de precisión con reductora planetaria, del mismo fabricante utilizado en robótica y aplicaciones aeroespaciales, lo que garantiza un comportamiento dinámico limpio y repetible ideal para identificación y control.
 
-- 🔌 **Plug & play desde MATLAB/Simulink.** Gracias al protocolo de comunicaciones binario desarrollado a medida, el modelo de Simulink prácticamente se reduce a **un único bloque** para cerrar el bucle de control. Solo hay que configurar el puerto serie (COMx o /dev/tty...) al que está conectado el Arduino — el resto funciona automáticamente.
+- 🔌 **Plug & play desde MATLAB/Simulink.** Gracias al protocolo de comunicaciones binario desarrollado a medida y a la **placa shield diseñada a medida** ([`hardware/pcb/`](hardware/pcb/)) que integra el driver TB6612FNG y el conector del encoder en un único módulo apilable sobre el Arduino, el modelo de Simulink prácticamente se reduce a **un único bloque** para cerrar el bucle de control. Solo hay que configurar el puerto serie — sin cables volantes, sin electrónica adicional.
 
 - 📦 **Dependencia mínima de toolboxes.** La única librería de MATLAB necesaria es el **Instrument Control Toolbox** — no se requieren toolboxes adicionales de Control System, Simulink Real-Time ni similares.
 
@@ -133,7 +133,7 @@ The rig stands out in four key areas:
 
 - ⚙️ **Professional-grade motor.** The **Maxon A-max 22** is a precision DC motor with planetary gearbox from the same manufacturer used in robotics and aerospace applications, ensuring clean, repeatable dynamics ideal for system identification and control experiments.
 
-- 🔌 **Plug & play from MATLAB/Simulink.** Thanks to the custom binary serial protocol, the Simulink model is essentially **a single block** to close the control loop. The only configuration needed is the serial port (COMx or /dev/tty...) the Arduino is connected to — everything else works automatically.
+- 🔌 **Plug & play from MATLAB/Simulink.** Thanks to the custom binary serial protocol and the **custom shield** ([`hardware/pcb/`](hardware/pcb/)) that integrates the TB6612FNG driver and encoder connector in a single stackable module, the Simulink model is essentially **a single block** to close the control loop. Just configure the serial port — no loose wires, no extra electronics.
 
 - 📦 **Minimal toolbox dependency.** The only MATLAB toolbox required is the **Instrument Control Toolbox** — no Control System Toolbox, Simulink Real-Time or other add-ons needed.
 

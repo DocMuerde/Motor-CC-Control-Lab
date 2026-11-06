@@ -1,29 +1,61 @@
-# Placa de circuito impreso / PCB
+# PCB — Shield Arduino Motor CC / DC Motor Arduino Shield
 
-## Español
+<p align="center">
+  <img src="../../docs/images/pcb_render.png" alt="Render 3D de la placa" width="500"/>
+</p>
 
-La placa centraliza las conexiones entre Arduino, driver y encoder AS5047P.
+## Descripción / Description
 
-### Archivos
+Shield diseñado a medida para Arduino UNO que integra en una sola placa el driver de motor y el conector del encoder, eliminando el cableado volante y haciendo el montaje completamente plug & play.
 
-| Archivo | Descripción |
-|---|---|
-| `schematic.*` | Esquemático (KiCad / PDF) |
-| `pcb_layout.*` | Layout de la placa (KiCad / Gerber) |
-| `gerber/` | Archivos listos para fabricación |
-| `bom.csv` | Lista de materiales |
-
-### Especificaciones
-
-| Parámetro | Valor |
-|---|---|
-| Tensión de alimentación motor | 12–24 V DC |
-| Corriente máxima | 1.2 A cont. / 3 A pico |
-| Tensión lógica | 5 V (Arduino) |
-| Capas | 2 |
+*Custom Arduino UNO shield integrating the motor driver and encoder connector on a single board, eliminating loose wiring for a fully plug-and-play assembly.*
 
 ---
 
-## English
+## Componentes integrados / Integrated components
 
-PCB centralising connections between Arduino, motor driver (TB6612FNG) and AS5047P encoder. Gerber files in `gerber/` are ready for JLCPCB, PCBWay or Eurocircuits.
+| Ref | Componente | Función |
+|---|---|---|
+| U1 | **Toshiba TB6612FNG** | Driver DC motor — 1.2 A cont. / 3 A pico |
+| U2 | Condensador electrolítico | Desacoplo de la alimentación VM del motor |
+| J1 | Conector SPI (7 pines) | Interfaz con encoder **ams AS5047P** (CS, CLK, MOSI, MISO, 3.3V, 5V, GND) |
+| LED | LED indicador (rojo) | Señal de alimentación activa |
+| J_MOTOR | 2× borneras (2 pines) | Salidas AO1/AO2 al motor |
+
+## Conexiones al Arduino / Arduino connections
+
+La placa se apila directamente sobre el Arduino UNO. Las señales de control quedan así:
+
+| Señal | Pin Arduino | Descripción |
+|---|---|---|
+| PWMA | D9 | PWM del motor (Timer1, 31 250 Hz) |
+| AIN1 | D7 | Dirección motor (bit 1) |
+| AIN2 | D8 | Dirección motor (bit 2) |
+| STBY | D6 | Standby driver (HIGH = activo) |
+| CS encoder | D4 | Chip Select AS5047P (SPI) |
+| SCK | D13 | Reloj SPI |
+| MISO | D12 | Datos encoder → Arduino |
+| MOSI | D11 | Datos Arduino → encoder |
+
+## Alimentación / Power
+
+- **VCC (lógica):** 5 V desde el propio Arduino
+- **VM (motor):** alimentación externa 9–12 V (bornera o pin VIN del Arduino con fuente externa)
+- El condensador electrolítico en VM amortigua los transitorios de corriente del motor
+
+## Archivos del diseño / Design files
+
+| Archivo | Contenido |
+|---|---|
+| [`Schematic_Control_Motor_CC_2026-11-06.pdf`](Schematic_Control_Motor_CC_2026-11-06.pdf) | Esquemático completo |
+| [`Gerber_Control_Motor_CC_PCB_Control_Motor_CC_2026-11-06.zip`](Gerber_Control_Motor_CC_PCB_Control_Motor_CC_2026-11-06.zip) | Archivos Gerber para fabricación |
+| [`BOM_Control_Motor_CC_2026-11-06.csv`](BOM_Control_Motor_CC_2026-11-06.csv) | Lista de materiales (BOM) |
+| [`OBJ_PCB_Control_Motor_CC_2026-11-06.zip`](OBJ_PCB_Control_Motor_CC_2026-11-06.zip) | Modelo 3D de la PCB (formato OBJ) |
+
+> **Diseñado con:** [EasyEDA](https://easyeda.com)
+
+## Notas de fabricación / Fabrication notes
+
+- Placa de 2 capas, FR4
+- Grosor de pista recomendado: ≥ 1 mm en las pistas de potencia (VM → motor)
+- Compatible con servicios estándar de PCB (JLCPCB, PCBWay, etc.)
