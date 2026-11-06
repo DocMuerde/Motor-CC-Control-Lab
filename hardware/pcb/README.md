@@ -14,13 +14,13 @@ Shield diseñado a medida para Arduino UNO que integra en una sola placa el driv
 
 ## Componentes integrados / Integrated components
 
-| Ref | Componente | Función |
-|---|---|---|
-| U1 | **Toshiba TB6612FNG** | Driver DC motor — 1.2 A cont. / 3 A pico |
-| U2 | Condensador electrolítico | Desacoplo de la alimentación VM del motor |
-| J1 | Conector SPI (7 pines) | Interfaz con encoder **ams AS5047P** (CS, CLK, MOSI, MISO, 3.3V, 5V, GND) |
-| LED | LED indicador (rojo) | Señal de alimentación activa |
-| J_MOTOR | 2× borneras (2 pines) | Salidas AO1/AO2 al motor |
+| Ref | Componente | Valor | Función |
+|---|---|---|---|
+| TB66121 | **Toshiba TB6612FNG** | — | Driver DC motor — 1.2 A cont. / 3 A pico |
+| C1 | Condensador film CBB | **100 nF (0.1 µF), 250 V** | Desacoplo de la alimentación lógica |
+| U2 | Condensador electrolítico | **10 µF** (Rubycon 420BXC10MEFC10X20, Ø10×20 mm) | Desacoplo de la alimentación VM del motor |
+| CN1 | Conector 2×8 pines, paso 2.54 mm | — | Interfaz con encoder **ams AS5047P** (CS, CLK, MOSI, MISO, 3.3V, 5V, GND, GND) |
+| U4, U18 | 2× bornera de tornillo (2 pines, paso 2.54 mm) | — | Salidas al motor (AO1/AO2 y BO1/BO2) |
 
 ## Conexiones al Arduino / Arduino connections
 
