@@ -17,13 +17,21 @@
 
 Este repositorio contiene todo el material necesario para montar y utilizar el **equipo de prácticas de control de un motor de corriente continua** desarrollado en el Departamento de Ingeniería de Sistemas y Automática de la Universidad de Sevilla (GEPOC).
 
-El equipo permite implementar y validar experimentalmente distintas estrategias de control (PID, control en espacio de estados, etc.) sobre un motor CC real, cerrando el bucle desde MATLAB a través de comunicación serie con un microcontrolador Arduino.
+El equipo está diseñado para ser **preciso, robusto y fácil de usar en el laboratorio**:
+
+- 🎯 **Alta resolución, señal limpia, sin fricción.** El encoder magnético **ams AS5047P** ofrece **14 bits de resolución** (16 384 pasos/vuelta). La medida de posición angular es extremadamente limpia, con un nivel de ruido prácticamente inapreciable. La velocidad se obtiene por derivación numérica de la posición, por lo que sí presenta algo más de ruido — fácilmente tratable con un filtro en MATLAB. Todo esto sin introducir ningún tipo de fricción en el eje, a diferencia de los encoders ópticos de contacto.
+
+- ⚙️ **Motor de calidad profesional.** El motor **Maxon A-max 22** es un motor DC de precisión con reductora planetaria, del mismo fabricante utilizado en robótica y aplicaciones aeroespaciales, lo que garantiza un comportamiento dinámico limpio y repetible ideal para identificación y control.
+
+- 🔌 **Plug & play desde MATLAB/Simulink.** Gracias al protocolo de comunicaciones binario desarrollado a medida, el modelo de Simulink prácticamente se reduce a **un único bloque** para cerrar el bucle de control. Solo hay que configurar el puerto serie (COMx o /dev/tty...) al que está conectado el Arduino — el resto funciona automáticamente.
+
+- 📦 **Dependencia mínima de toolboxes.** La única librería de MATLAB necesaria es el **Instrument Control Toolbox** — no se requieren toolboxes adicionales de Control System, Simulink Real-Time ni similares.
 
 ### Componentes del sistema
 
 | Componente | Modelo | Descripción |
 |---|---|---|
-| Motor | Maxon RE / EC | Motor CC con reductora planetaria |
+| Motor | Maxon A-max 22 (Art. 110120) | Motor CC con reductora GP 22 B (Art. 110356) |
 | Driver | Toshiba TB6612FNG | Driver dual de motor, 1.2 A cont. / 3 A pico |
 | Encoder | ams AS5047P | Encoder magnético 14 bits, lado de carga |
 | Microcontrolador | Arduino (Uno / Mega) | Adquisición y protocolo de comunicaciones |
@@ -113,13 +121,21 @@ Contacto: [ialvarado@us.es](mailto:ialvarado@us.es)
 
 This repository contains all the material needed to assemble and use the **DC motor control lab setup** developed at the University of Seville (GEPOC).
 
-The rig allows implementing and experimentally validating different control strategies (PID, state-space, etc.) on a real DC motor, closing the loop from MATLAB via serial communication with an Arduino microcontroller.
+The rig is designed to be **accurate, robust and easy to use in the lab**:
+
+- 🎯 **High resolution, clean signal, zero friction.** The **ams AS5047P** magnetic encoder delivers **14-bit resolution** (16 384 steps/rev). The angular position signal is exceptionally clean, with virtually no measurable noise. Velocity is obtained by numerical differentiation of position, so it carries somewhat more noise — easily handled with a filter in MATLAB. All of this with zero mechanical friction on the shaft, unlike contact optical encoders.
+
+- ⚙️ **Professional-grade motor.** The **Maxon A-max 22** is a precision DC motor with planetary gearbox from the same manufacturer used in robotics and aerospace applications, ensuring clean, repeatable dynamics ideal for system identification and control experiments.
+
+- 🔌 **Plug & play from MATLAB/Simulink.** Thanks to the custom binary serial protocol, the Simulink model is essentially **a single block** to close the control loop. The only configuration needed is the serial port (COMx or /dev/tty...) the Arduino is connected to — everything else works automatically.
+
+- 📦 **Minimal toolbox dependency.** The only MATLAB toolbox required is the **Instrument Control Toolbox** — no Control System Toolbox, Simulink Real-Time or other add-ons needed.
 
 ### System Components
 
 | Component | Model | Description |
 |---|---|---|
-| Motor | Maxon RE / EC | DC motor with planetary gearbox |
+| Motor | Maxon A-max 22 (Art. 110120) | DC motor with GP 22 B gearbox (Art. 110356) |
 | Driver | Toshiba TB6612FNG | Dual motor driver, 1.2 A cont. / 3 A peak |
 | Encoder | ams AS5047P | 14-bit magnetic encoder, load side |
 | Microcontroller | Arduino (Uno / Mega) | Data acquisition and comm. protocol |
