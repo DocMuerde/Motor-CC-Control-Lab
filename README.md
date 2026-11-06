@@ -168,3 +168,31 @@ CC BY-SA 4.0 — See [LICENSE](LICENSE) for details.
 
 **Systems Engineering and Automation Department (ISA)**  
 University of Seville — Contact: [ialvarado@us.es](mailto:ialvarado@us.es)
+
+---
+
+## 🗂 Estado del proyecto y próximos pasos
+
+> *Esta sección es un resumen de trabajo para retomar la sesión con Claude.*
+
+### ✅ Completado (nov 2026)
+
+- Firmware Arduino (`firmware/arduino/main/main.ino`): Ts = 10 ms (100 Hz), protocolo serie binario, observador de Luenberger (desactivado, listo para activar).
+- Modelo Simulink (`software/matlab/MotorCC_V2.slx`): detección automática de puerto serie, bloque único para cerrar el lazo.
+- Guía de prácticas **Lab 01** (`labs/lab01/lab01_isa.tex/.pdf`): descripción del equipo, lectura del encoder, medida de velocidad, identificación por escalón.
+- Guía de prácticas **Lab 02** (`labs/lab02/lab02_isa.tex/.pdf`): zona muerta, control de velocidad (P → PI), control de posición (PD → PID).
+- Todo el repositorio renombrado de GEPOC → **ISA**.
+
+### 🔜 Pendiente
+
+1. **Revisar y ajustar las guías de prácticas con el equipo real** — los parámetros del modelo (K ≈ 3, τ ≈ 0.07 s a 12 V) y los valores de las ganancias de los controladores deben verificarse experimentalmente y ajustarse si es necesario antes de pasárselas a los alumnos.
+2. **Crear los boletines de soluciones** (Lab 01 y Lab 02) — una vez hechos los experimentos reales.
+3. **Exportar el modelo Simulink a versiones anteriores** (`Simulink.exportToVersion`) para compatibilidad con MATLAB R2020b–R2024b por si los alumnos no tienen la última versión.
+4. **Lab 03** (opcional) — práctica avanzada (control en cascada, estimación de estado, etc.) si se quiere ampliar el material.
+
+### 💬 Cómo retomar con Claude
+
+Abre una sesión nueva, comparte este repositorio y di algo como:
+
+> *"Tengo un equipo de prácticas de control de motor CC. El repositorio está en GitHub: `https://github.com/DocMuerde/Motor-CC-Control-Lab`. Lee el README para ver el estado del proyecto y retomamos desde los puntos pendientes."*
+
