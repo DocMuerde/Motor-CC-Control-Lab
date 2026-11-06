@@ -1,6 +1,6 @@
 /* =============================================================================
    EQUIPO DE PRÁCTICAS — CONTROL DE MOTOR CC
-   Departamento de Ingeniería de Sistemas y Automática — GEPOC
+   Departamento de Ingeniería de Sistemas y Automática — ISA
    Universidad de Sevilla
    Contacto: ialvarado@us.es
    

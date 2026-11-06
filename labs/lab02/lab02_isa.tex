@@ -1,0 +1,474 @@
+% ============================================================
+%  Práctica de Laboratorio 2 — Equipo ISA (Motor CC)
+%  Control Automático — 2º Grado en ITT
+%  Dpto. Ingeniería de Sistemas y Automática — Universidad de Sevilla
+% ============================================================
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{multirow}
+\usepackage{siunitx}
+
+\usetikzlibrary{arrows.meta, positioning, fit, calc, shapes.geometric,
+                shapes.misc, decorations.pathreplacing, backgrounds}
+\pgfplotsset{compat=1.18}
+
+\geometry{margin=2.5cm, top=3cm, bottom=3cm, headheight=14pt}
+
+\definecolor{isablue}{RGB}{0,70,130}
+\definecolor{isared}{RGB}{180,30,30}
+\definecolor{lightgray}{RGB}{240,240,245}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small\textcolor{isablue}{\textbf{Control Automático — ITT}}}
+\rhead{\small\textcolor{isablue}{\textbf{Práctica 2 — Equipo ISA}}}
+\cfoot{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\tcbuselibrary{skins,breakable}
+\newtcolorbox{pregunta}[2][]{
+  enhanced,
+  colback=isared!8,
+  colframe=isared,
+  fonttitle=\bfseries\small,
+  title={#2},
+  #1
+}
+\newtcolorbox{notabox}{
+  enhanced,
+  colback=isablue!8,
+  colframe=isablue,
+  fonttitle=\bfseries\small,
+  title={Nota},
+}
+
+% ---- Estilo bloques TikZ ----
+\tikzset{
+  sumblock/.style={draw, circle, fill=white, minimum size=0.6cm,
+                   inner sep=0pt, font=\small},
+  ctrlblock/.style={draw, fill=isablue!15, minimum width=1.8cm,
+                    minimum height=0.8cm, align=center, font=\small,
+                    rounded corners=2pt},
+  plantblock/.style={draw, fill=isared!10, minimum width=2.4cm,
+                     minimum height=0.8cm, align=center, font=\small,
+                     rounded corners=2pt},
+  arr/.style={-{Stealth[length=5pt]}, semithick}
+}
+
+% ===========================================================
+\begin{document}
+% ===========================================================
+
+\begin{center}
+  {\large Control Automático}\\[2pt]
+  {\large 2\textsuperscript{o} Curso Grado en Ingeniería de las Tecnologías de la Telecomunicación}\\[10pt]
+  \rule{\linewidth}{1.5pt}\\[6pt]
+  {\LARGE\bfseries\color{isablue} Práctica de Laboratorio 2}\\[4pt]
+  {\Large Control PID de un motor de corriente continua}\\[4pt]
+  \rule{\linewidth}{1.5pt}\\[6pt]
+  {\small Dpto.\ de Ingeniería de Sistemas y Automática — ISA\\
+   Universidad de Sevilla \quad | \quad \url{ialvarado@us.es}}
+\end{center}
+
+\vspace{6pt}
+
+% ============================================================
+\section{Objetivos}
+% ============================================================
+
+Esta práctica continúa el trabajo iniciado en la práctica~1 con el equipo ISA.
+Los objetivos son:
+
+\begin{itemize}[noitemsep]
+  \item Repetir la identificación del sistema y analizar la zona muerta del motor.
+  \item Diseñar e implementar un controlador de \textbf{velocidad}:
+        primero proporcional (P) y después proporcional-integral (PI).
+  \item Diseñar e implementar un controlador de \textbf{posición}:
+        proporcional-derivativo (PD) y proporcional-integral-derivativo (PID).
+  \item Comprender la influencia de cada parámetro del controlador PID y el
+        efecto de la zona muerta en el error en régimen permanente.
+\end{itemize}
+
+\begin{notabox}
+  Para toda esta práctica puede suponer que el punto de funcionamiento en tensión
+  es nulo ($V_0=0$), por lo que no es necesario el paso a variables incrementales.
+\end{notabox}
+
+% ============================================================
+\section{Análisis del sistema}
+% ============================================================
+
+\subsection{Identificación (revisión)}
+
+\begin{enumerate}
+  \item Abra el modelo \texttt{MotorCC\_V2.slx} y configure el puerto serie
+        haciendo doble clic en el bloque Motor\_CC.
+  \item Partiendo del modelo de Simulink de la práctica~1 (bloque Motor\_CC con
+        la salida de velocidad en rad/s, opcionalmente filtrada), aplique un
+        escalón desde $u=0$ hasta $u=42$ ($V_{eq}\approx\SI{2.0}{V}$) y
+        verifique que el modelo funciona correctamente.
+\end{enumerate}
+
+\begin{pregunta}{Pregunta \#1 — Función de transferencia}
+  Repita la identificación del apartado~3 de la práctica~1 con el escalón
+  $u=42$ ($V_{eq}\approx\SI{2.0}{V}$). Anote la función de transferencia
+  $G(s)=K/(\tau s+1)$ con los valores de $K$ y $\tau$ obtenidos.
+  Esta función de transferencia se utilizará en los apartados siguientes.
+\end{pregunta}
+
+\subsection{Zona muerta}
+
+La zona muerta es un fenómeno no lineal: por debajo de cierta tensión de entrada,
+el motor no se mueve porque la fricción estática del conjunto motor+reductora supera
+el par motor. Los límites de zona muerta son distintos para cada sentido de giro.
+
+\begin{enumerate}
+  \item Configure el bloque \emph{Constant} con un valor inicial $u=5$.
+        Ejecute la simulación y compruebe si el motor se mueve observando la señal
+        de velocidad $\omega$ en el Scope.
+  \item Vaya aumentando $u$ de en 1 en 1 hasta detectar el valor mínimo para el
+        cual el motor gira. Anótelo como $u_{ZM}^{+}$.
+  \item Repita con valores negativos para encontrar $u_{ZM}^{-}$.
+\end{enumerate}
+
+\begin{pregunta}{Pregunta \#2 — Zona muerta}
+  \begin{enumerate}[label=\alph*)]
+    \item ¿Cuáles son los límites de la zona muerta
+          $u_{ZM}^{+}$ y $u_{ZM}^{-}$?
+    \item Conviértalos a tensión equivalente: $V_{ZM}^{\pm}=u_{ZM}^{\pm}\cdot12/255$.
+    \item ¿Es la zona muerta simétrica para ambos sentidos? ¿Por qué podría no serlo?
+    \item ¿Qué implicación tiene la zona muerta para los controladores que diseñará
+          a continuación?
+  \end{enumerate}
+\end{pregunta}
+
+% ============================================================
+\section{Control de la velocidad del motor}
+% ============================================================
+
+La figura~\ref{fig:vel_loop} muestra el esquema de control de velocidad en bucle
+cerrado. La referencia $\omega_r$ se compara con la velocidad medida $\omega$;
+el error $e=\omega_r-\omega$ es procesado por el controlador $C(s)$ para generar
+la señal de control $u$.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=1.3cm]
+  \node[sumblock] (sum) {\footnotesize$+$};
+  \node[ctrlblock, right=1.4cm of sum] (ctrl) {$C(s)$};
+  \node[plantblock, right=1.4cm of ctrl] (plant)
+    {$G(s)=\dfrac{K}{\tau s+1}$};
+  \node[right=1.4cm of plant] (out) {};
+
+  % Referencias y salidas
+  \node[left=1.4cm of sum] (ref) {$\omega_r$};
+  \draw[arr] (ref) -- (sum);
+  \draw[arr] (sum) -- node[above,font=\scriptsize]{$e$} (ctrl);
+  \draw[arr] (ctrl) -- node[above,font=\scriptsize]{$u$} (plant);
+  \draw[arr] (plant) -- node[above,font=\scriptsize]{$\omega$} (out.center);
+
+  % Realimentación
+  \draw[arr] (out.center) +(0.4,0) -- +(0.4,-1.0) -| node[near end,right,font=\scriptsize]{$-$} (sum.south);
+
+  % Etiqueta
+  \node[below=0.1cm of sum, font=\tiny, xshift=0.1cm] {$-$};
+\end{tikzpicture}
+\caption{Esquema de control de velocidad en bucle cerrado.}
+\label{fig:vel_loop}
+\end{figure}
+
+\subsection{Controlador proporcional (P)}
+
+\begin{enumerate}
+  \item Modifique el modelo de Simulink para implementar un \textbf{controlador P}:
+        añada un bloque \emph{Sum} que reste la velocidad medida a la referencia,
+        conecte la salida al bloque Motor\_CC a través de un \emph{Gain}~$K_p$.
+  \item Como referencia, use un \emph{Pulse Generator} con amplitud $\pm 20\;\si{rad/s}$
+        y frecuencia $\SI{0.4}{Hz}$ (período $\SI{2.5}{s}$).
+  \item Pruebe distintos valores de $K_p$ y analice el comportamiento del sistema
+        (error en régimen permanente, sobreimpulso, oscilaciones).
+  \item Introduzca perturbaciones presionando suavemente el eje del motor con
+        un dedo y observe la reacción del controlador.
+\end{enumerate}
+
+\begin{pregunta}{Pregunta \#3 — Controlador proporcional}
+  \begin{enumerate}[label=\alph*)]
+    \item ¿Existe error en régimen permanente con el controlador~P?
+          ¿A qué se debe? (Pista: recuerde el tipo del sistema en bucle cerrado.)
+    \item ¿Cómo afecta aumentar $K_p$ al error y a la estabilidad?
+    \item ¿Responde el sistema adecuadamente a las perturbaciones?
+          ¿Qué valor de $K_p$ parece un compromiso razonable?
+  \end{enumerate}
+\end{pregunta}
+
+\subsection{Diseño analítico del controlador PI}
+
+El objetivo de diseño es conseguir que el sistema en bucle cerrado se comporte como
+un sistema de primer orden con constante de tiempo $\tau_{cl}=\SI{0.1}{s}$ y ganancia
+estática unitaria.
+
+El controlador PI tiene la forma:
+\begin{equation}
+  C(s) = K_p\,\frac{T_i s + 1}{T_i s}
+  \label{eq:PI}
+\end{equation}
+
+La función de transferencia en bucle cerrado con el controlador~(\ref{eq:PI}) y la
+planta $G(s)=K/(\tau s+1)$ es:
+\begin{equation}
+  T(s) = \frac{C(s)\,G(s)}{1+C(s)\,G(s)}
+\end{equation}
+
+\textbf{Procedimiento de diseño (cancelación polo-cero):}
+
+\begin{enumerate}
+  \item \textbf{Cancelación:} Elija $T_i = \tau$ para cancelar el polo de la planta.
+        Así $C(s)\,G(s) = K_p K / (T_i s)$.
+  \item \textbf{Especificación:} La función de bucle cerrado resultante es:
+        \begin{equation}
+          T(s) = \frac{1}{\frac{T_i}{K_p K}\,s + 1}
+          = \frac{1}{\tau_{cl}\,s+1}
+          \quad\Rightarrow\quad
+          \tau_{cl} = \frac{T_i}{K_p K}
+          \label{eq:tau_cl}
+        \end{equation}
+  \item \textbf{Cálculo:} De (\ref{eq:tau_cl}) se obtiene
+        $K_p = T_i / (K\,\tau_{cl}) = \tau / (K \cdot \SI{0.1}{s})$.
+\end{enumerate}
+
+\begin{enumerate}
+  \item Calcule $K_p$ y $T_i$ con la función de transferencia identificada en \#1.
+  \item Implemente el controlador PI en Simulink usando un bloque \emph{Transfer Fcn}
+        con numerador $[K_p T_i,\;K_p]$ y denominador $[T_i,\;0]$,
+        o bien con un bloque \emph{PID Controller} con $K_p$, $K_i=K_p/T_i$, $K_d=0$.
+  \item Añada una saturación a la salida del controlador para limitar $u\in[-255,255]$.
+  \item Ejecute la simulación con la referencia en escalones $\pm 20\;\si{rad/s}$
+        a $\SI{0.4}{Hz}$.
+\end{enumerate}
+
+\begin{pregunta}{Pregunta \#4 — Control PI de velocidad}
+  \begin{enumerate}[label=\alph*)]
+    \item Anote los valores de $K_p$ y $T_i$ calculados.
+    \item ¿Se elimina el error en régimen permanente? ¿Por qué el PI consigue esto?
+    \item Si es necesario, ajuste $K_p$ manualmente para mejorar la respuesta
+          (rapidez, sobreimpulso). Anote el valor final utilizado.
+    \item Introduzca perturbaciones con el dedo. ¿Cómo responde el PI
+          frente al controlador~P? Razone en base a la acción integral.
+  \end{enumerate}
+\end{pregunta}
+
+% ============================================================
+\section{Control de la posición del motor}
+% ============================================================
+
+Ahora la variable a controlar es la \textbf{posición angular} $\theta$ en radianes.
+El esquema de control es idéntico al de la figura~\ref{fig:vel_loop} pero con
+$\theta_r$ como referencia y $\theta$ como salida (figura~\ref{fig:pos_loop}).
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=1.3cm]
+  \node[sumblock] (sum) {\footnotesize$+$};
+  \node[ctrlblock, right=1.4cm of sum] (ctrl) {$C(s)$};
+  \node[plantblock, right=1.5cm of ctrl] (plant)
+    {$G_\theta(s)=\dfrac{K}{\tau s^2+s}$};
+  \node[right=1.4cm of plant] (out) {};
+
+  \node[left=1.4cm of sum] (ref) {$\theta_r$};
+  \draw[arr] (ref) -- (sum);
+  \draw[arr] (sum) -- node[above,font=\scriptsize]{$e$} (ctrl);
+  \draw[arr] (ctrl) -- node[above,font=\scriptsize]{$u$} (plant);
+  \draw[arr] (plant) -- node[above,font=\scriptsize]{$\theta$} (out.center);
+  \draw[arr] (out.center) +(0.4,0) -- +(0.4,-1.0) -| node[near end,right,font=\scriptsize]{$-$} (sum.south);
+  \node[below=0.1cm of sum, font=\tiny, xshift=0.1cm] {$-$};
+\end{tikzpicture}
+\caption{Esquema de control de posición en bucle cerrado.
+La planta $G_\theta(s)$ incluye el integrador implícito entre velocidad y posición.}
+\label{fig:pos_loop}
+\end{figure}
+
+La función de transferencia de la posición respecto a la tensión es:
+\begin{equation}
+  G_\theta(s) = \frac{\Theta(s)}{V_{eq}(s)} = \frac{G(s)}{s} = \frac{K}{s(\tau s+1)}
+\end{equation}
+pues la posición es la integral de la velocidad.
+
+\subsection{Diseño analítico del controlador PD}
+
+El objetivo de diseño para posición es un sistema en bucle cerrado de primer orden
+con $\tau_{cl}=\SI{0.02}{s}$ y ganancia estática unitaria.
+
+El controlador PD (con la derivada filtrada para que sea implementable):
+\begin{equation}
+  C(s) = K_p\left(1 + T_d\,s\right)
+  \label{eq:PD}
+\end{equation}
+
+\textbf{Procedimiento (cancelación polo-cero):}
+\begin{enumerate}
+  \item Elija $T_d = \tau$ para cancelar el polo de la planta.
+        La función de bucle resulta $C(s)\,G_\theta(s) = K_p K / s$.
+  \item La función de bucle cerrado es:
+        \begin{equation}
+          T(s) = \frac{K_p K / s}{1 + K_p K / s} = \frac{1}{\frac{1}{K_p K}s+1}
+          = \frac{1}{\tau_{cl}\,s+1}
+          \quad\Rightarrow\quad
+          K_p = \frac{1}{K\,\tau_{cl}}
+        \end{equation}
+  \item Calcule $K_p$ con $\tau_{cl}=\SI{0.02}{s}$.
+\end{enumerate}
+
+\begin{notabox}
+  La acción derivativa pura es no implementable. Use el bloque \emph{PID Controller}
+  de Simulink con $K_d$ y un filtro de derivada con coeficiente $N$
+  (el PD queda: $C(s) = K_p + K_p T_d s\,N/(s+N)$). Comience con $N=100$.
+\end{notabox}
+
+\begin{enumerate}
+  \item Modifique el modelo de Simulink para controlar la posición:
+        \begin{itemize}[noitemsep]
+          \item Conecte la salida de posición $\theta$ [°] del bloque Motor\_CC,
+                conviértala a rad (multiplicar por $\pi/180$) y réaliméntela.
+          \item Como referencia, use un \emph{Pulse Generator} con amplitud
+                $\pm 0.5\;\si{rad}$ y frecuencia $\SI{0.1}{Hz}$ (período $\SI{10}{s}$).
+        \end{itemize}
+  \item Implemente el controlador PD con $K_p$ calculado y $T_d=\tau$.
+  \item Ejecute la simulación y analice el resultado.
+\end{enumerate}
+
+\begin{pregunta}{Pregunta \#5 — Control PD de posición}
+  \begin{enumerate}[label=\alph*)]
+    \item Anote los valores de $K_p$ y $T_d$ calculados.
+    \item ¿Se obtiene el comportamiento de primer orden esperado con $\tau_{cl}=\SI{0.02}{s}$?
+    \item ¿Existe error en régimen permanente? ¿A qué se debe?
+          (Pista: piense en el efecto de la zona muerta.)
+    \item Si es necesario, ajuste $K_p$ manualmente para mejorar la respuesta.
+          ¿Qué compromiso aparece al aumentar $K_p$?
+  \end{enumerate}
+\end{pregunta}
+
+\subsection{Control PID: reducción del error en régimen permanente}
+
+El error en régimen permanente con control PD se debe principalmente a la zona
+muerta: el controlador no puede generar la pequeña acción de control necesaria
+para compensar la fricción estática. La acción integral del PID puede reducir
+(aunque no eliminar completamente) este error.
+
+\begin{enumerate}
+  \item Parta del controlador PD anterior y añada acción integral:
+        \begin{equation}
+          C(s) = K_p\left(1 + \frac{1}{T_i s} + T_d s\right)
+        \end{equation}
+        Comience con un valor de $T_i$ grande (p.~ej., $T_i = \SI{1}{s}$) y
+        vaya reduciéndolo mientras el sistema permanezca estable.
+  \item Observe el efecto de la acción integral sobre el error en régimen
+        permanente y sobre el sobreimpulso.
+  \item Ajuste los tres parámetros $K_p$, $T_i$ y $T_d$ por prueba y error para
+        obtener la mejor respuesta posible (mínimo error y mínimo sobreimpulso).
+\end{enumerate}
+
+\begin{pregunta}{Pregunta \#6 — Control PID de posición}
+  \begin{enumerate}[label=\alph*)]
+    \item Anote los parámetros finales del PID ($K_p$, $T_i$, $T_d$).
+    \item ¿Se reduce el error en régimen permanente con la acción integral?
+          ¿Lo elimina completamente? ¿Por qué?
+    \item ¿Qué problema aparece si $T_i$ es demasiado pequeño?
+    \item Razone si es posible diseñar un PID analíticamente cuando el sistema
+          presenta zona muerta. ¿Qué herramientas de diseño serían necesarias?
+    \item Compare las respuestas PD y PID en la misma gráfica.
+          ¿Cuál preferiría para esta aplicación? Justifique la respuesta.
+  \end{enumerate}
+\end{pregunta}
+
+% ============================================================
+\section*{Hoja de respuestas}
+% ============================================================
+\addcontentsline{toc}{section}{Hoja de respuestas}
+
+\begin{center}
+{\large\bfseries Hoja de respuestas — Práctica 2}
+\end{center}
+
+Nombre: \underline{\hspace{8cm}}
+
+\vspace{6pt}
+
+\begin{tabular}{|p{5.5cm}|p{8.5cm}|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Dato solicitado}} &
+\multicolumn{1}{c|}{\textbf{Respuesta}} \\
+\hline
+\#1 Función de transferencia $G(s)$ &
+\vspace{2.5cm} \\
+\hline
+\#2 Límites de zona muerta ($u_{ZM}^+$, $u_{ZM}^-$) &
+\vspace{2.5cm} \\
+\hline
+\#3 Comportamiento controlador P ($K_p$ elegido) &
+\vspace{2.5cm} \\
+\hline
+\#4 Control PI de velocidad ($K_p$, $T_i$) &
+\vspace{2.5cm} \\
+\hline
+\#5 Control PD de posición ($K_p$, $T_d$) &
+\vspace{2.5cm} \\
+\hline
+\#6 Control PID de posición ($K_p$, $T_i$, $T_d$) &
+\vspace{3.0cm} \\
+\hline
+\end{tabular}
+
+% ============================================================
+\appendix
+\section{Implementación del controlador PID en Simulink}
+% ============================================================
+
+Simulink dispone del bloque \emph{PID Controller} (en la librería
+\texttt{Simulink/Continuous}) que implementa directamente el PID en la forma:
+\begin{equation}
+  u(t) = K_p\,e(t) + \frac{K_p}{T_i}\int_0^t e(\sigma)\,d\sigma
+         + K_p\,T_d\,\frac{N\,e(t)}{1 + N\int_0^t e(\sigma)\,d\sigma\cdot\ldots}
+\end{equation}
+o de forma equivalente en frecuencia:
+\begin{equation}
+  C(s) = K_p + \frac{K_p}{T_i\,s} + K_p\,T_d\,\frac{N\,s}{s+N}
+\end{equation}
+donde $N$ es el coeficiente de filtrado de la derivada. Un valor típico de
+$N\in[20,\,200]$ asegura que la derivada sea implementable y no amplifique
+excesivamente el ruido de alta frecuencia.
+
+Configure el bloque PID en MATLAB/Simulink de la siguiente manera:
+\begin{enumerate}[noitemsep]
+  \item Arrastre un bloque \emph{PID Controller} al diagrama.
+  \item Haga doble clic y seleccione el tipo (P, PI, PD o PID).
+  \item Introduzca los parámetros $K_p$ (proporcional), $T_i$ (integral),
+        $T_d$ (derivativo) y $N$ (filtro de derivada).
+  \item Añada siempre un bloque \emph{Saturation} a la salida del controlador
+        limitando $u\in[-255,\,255]$ para no saturar el driver del motor.
+\end{enumerate}
+
+\subsection*{Anti-windup}
+
+Cuando la señal de control satura, el integrador puede seguir acumulando error
+(\emph{windup}), provocando sobretensiones al salir de la saturación.
+Habilite el anti-windup en el bloque PID seleccionando el método
+\emph{Back-calculation} con constante de rastreo $K_b = 1/T_i$.
+
+\end{document}

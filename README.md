@@ -15,7 +15,7 @@
 
 ### Descripción del sistema
 
-Este repositorio contiene todo el material necesario para montar y utilizar el **equipo de prácticas de control de un motor de corriente continua** desarrollado en el Departamento de Ingeniería de Sistemas y Automática de la Universidad de Sevilla (GEPOC).
+Este repositorio contiene todo el material necesario para montar y utilizar el **equipo de prácticas de control de un motor de corriente continua** desarrollado en el Departamento de Ingeniería de Sistemas y Automática de la Universidad de Sevilla (ISA).
 
 > **¿Por qué este equipo?**  
 > No todos los equipos de laboratorio son iguales. Este se ha diseñado desde cero eligiendo los mejores componentes disponibles para cada función: un encoder magnético sin contacto de **14 bits**, un motor **Maxon** de precisión aeroespacial y un protocolo de comunicaciones propio que hace que conectar MATLAB/Simulink sea cuestión de minutos. El resultado es una plataforma donde la señal habla por sí sola — sin ruido artificial, sin fricciones parásitas, sin restricciones de toolboxes — y en la que el estudiante puede centrarse en el control, no en la electrónica.
@@ -112,7 +112,7 @@ Este proyecto se distribuye bajo licencia **Creative Commons Attribution-ShareAl
 
 ### Créditos
 
-Desarrollado en el **Grupo de Ingeniería de Sistemas y Automática (GEPOC)**  
+Desarrollado en el **Departamento de Ingeniería de Sistemas y Automática (ISA)**  
 Universidad de Sevilla — Departamento de Ingeniería de Sistemas y Automática  
 Contacto: [ialvarado@us.es](mailto:ialvarado@us.es)
 
@@ -122,7 +122,7 @@ Contacto: [ialvarado@us.es](mailto:ialvarado@us.es)
 
 ### System Description
 
-This repository contains all the material needed to assemble and use the **DC motor control lab setup** developed at the University of Seville (GEPOC).
+This repository contains all the material needed to assemble and use the **DC motor control lab setup** developed at the University of Seville (ISA).
 
 > **Why this rig?**  
 > Not all lab setups are created equal. This one was designed from scratch with the best available component for each job: a **14-bit** contactless magnetic encoder, an aerospace-grade **Maxon** precision motor, and a custom communication protocol that gets MATLAB/Simulink running in minutes. The result is a platform where the signals speak for themselves — no artificial noise, no parasitic friction, no toolbox dependencies — allowing students to focus on control design, not wiring.
@@ -166,5 +166,5 @@ CC BY-SA 4.0 — See [LICENSE](LICENSE) for details.
 
 ### Credits
 
-**Systems Engineering and Automation Group (GEPOC)**  
+**Systems Engineering and Automation Department (ISA)**  
 University of Seville — Contact: [ialvarado@us.es](mailto:ialvarado@us.es)
