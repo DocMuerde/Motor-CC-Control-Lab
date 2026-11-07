@@ -85,14 +85,12 @@
 
 % ---- Portada ----
 \begin{center}
-  {\large Control Automático}\\[2pt]
-  {\large 2\textsuperscript{o} Curso Grado en Ingeniería de las Tecnologías de la Telecomunicación}\\[10pt]
   \rule{\linewidth}{1.5pt}\\[6pt]
-  {\LARGE\bfseries\color{isablue} Práctica de Laboratorio 1}\\[4pt]
+  {\LARGE\bfseries\color{isablue} Práctica 1}\\[6pt]
   {\Large Análisis de un motor de corriente continua}\\[4pt]
-  \rule{\linewidth}{1.5pt}\\[6pt]
-  {\small Dpto.\ de Ingeniería de Sistemas y Automática — ISA\\
-   Universidad de Sevilla \quad | \quad \url{ialvarado@us.es}}
+  \rule{\linewidth}{1.5pt}\\[8pt]
+  {\small Dpto.\ de Ingeniería de Sistemas y Automática (ISA)\\[2pt]
+   Universidad de Sevilla}
 \end{center}
 
 \vspace{6pt}
@@ -114,6 +112,14 @@ Los objetivos concretos son:
         constante de tiempo~$\tau$) mediante ensayos de escalón.
 \end{itemize}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\linewidth]{../../docs/images/equipo_render.png}
+\caption{Equipo de prácticas ISA: motor CC maxon A-max 22 con reductora GP~22B,
+         encoder magnético AS5047P, driver TB6612FNG y Arduino UNO.}
+\label{fig:equipo_foto}
+\end{figure}
+
 % ============================================================
 \section{Descripción del equipo ISA}
 % ============================================================
@@ -134,62 +140,37 @@ El banco de prácticas está formado por los siguientes elementos (figura~\ref{f
         intercambia datos con el Arduino a través del puerto USB/serie.
 \end{itemize}
 
-% ---- Figura: esquema del equipo ----
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[
-  block/.style={draw, fill=isablue!15, minimum width=2.6cm, minimum height=1cm,
-                align=center, font=\small\bfseries, rounded corners=3pt},
-  smallblock/.style={draw, fill=isared!10, minimum width=2.1cm, minimum height=0.8cm,
-                align=center, font=\small, rounded corners=3pt},
-  arr/.style={-{Stealth[length=6pt]}, thick},
-  biarr/.style={{Stealth[length=6pt]}-{Stealth[length=6pt]}, thick},
-  node distance=1.6cm
-]
-  \node[block] (matlab)  {PC\\MATLAB/Simulink};
-  \node[block, right=2.2cm of matlab] (arduino) {Arduino UNO};
-  \node[block, right=2.2cm of arduino] (driver)  {Driver\\TB6612FNG};
-  \node[block, right=2.0cm of driver]  (motor)   {Motor CC\\Maxon};
-  \node[smallblock, below=1.2cm of motor] (encoder) {Encoder\\AS5047P};
-
-  \draw[biarr] (matlab)  -- node[above,font=\scriptsize]{USB Serie\\115200 baud} (arduino);
-  \draw[arr]   (arduino) -- node[above,font=\scriptsize]{PWM + dir.} (driver);
-  \draw[arr]   (driver)  -- node[above,font=\scriptsize]{$V_{motor}$} (motor);
-  \draw[arr]   (motor)   -- node[right,font=\scriptsize]{eje} (encoder);
-  \draw[arr]   (encoder) -- node[below,font=\scriptsize]{SPI (ángulo)} +(-3.6,0) |- (arduino);
-
-  % Etiquetas de señales
-  \node[font=\scriptsize, below=0.25cm of matlab, align=center]
-    {$u\in[-255,255]$\\$\theta[\si{\degree}],\;\omega[\si{\degree/s}]$};
-\end{tikzpicture}
+\includegraphics[width=0.92\linewidth]{../../docs/images/matlab/diagram_motor_cc_es.png}
 \caption{Esquema del equipo de prácticas ISA.}
 \label{fig:esquema}
 \end{figure}
 
-\subsection{Protocolo de comunicación serie}
+\subsection{Interfaz MATLAB -- Arduino}
 
-El Arduino y MATLAB intercambian paquetes binarios cada $T_s=\SI{10}{ms}$:
+El bloque \textbf{Motor\_CC} gestiona automáticamente la comunicación. Desde el
+punto de vista del alumno, el intercambio es sencillo:
 
-\begin{center}
-\begin{tabular}{lll}
-\toprule
-\textbf{Dirección} & \textbf{Trama (bytes)} & \textbf{Contenido}\\
-\midrule
-Arduino $\to$ MATLAB & \texttt{'V'} $|$ float $\theta$ $|$ float $\omega$ $|$ float $u$ $|$ \texttt{'$\backslash$n'} &
-  $\theta$~[°], $\omega$~[°/s], eco de~$u$\\
-MATLAB $\to$ Arduino & \texttt{'A'} $|$ int16 $u$ $|$ \texttt{'$\backslash$n'} &
-  señal de control $u\in[-255,255]$\\
-\bottomrule
-\end{tabular}
-\end{center}
+\begin{itemize}[noitemsep]
+  \item \textbf{Simulink $\to$ Arduino:} cada 10~ms, el modelo envía al Arduino
+        la señal de control~$u \in [-255,\;255]$.
+        Un valor positivo gira el motor en un sentido; negativo, en el contrario.
+        El valor~0 detiene el motor.
+  \item \textbf{Arduino $\to$ Simulink:} el Arduino devuelve, también cada 10~ms,
+        la posición angular acumulada~$\theta$ [°] y la velocidad angular~$\omega$ [°/s].
+\end{itemize}
 
-La señal de control equivalente en tensión es:
+La relación entre la señal de control y la tensión equivalente aplicada al motor es:
 \begin{equation}
-  V_{eq} = u \cdot \frac{V_{cc}}{255} \approx u \cdot \frac{12}{255} \quad [\si{V}]
+  V_{eq} = u \cdot \frac{12\;\text{V}}{255}
+  \qquad \Rightarrow \quad
+  u = 255 \;\widehat{=}\; 12\;\text{V}, \quad u = 128 \;\widehat{=}\; 6\;\text{V}
+  \label{eq:Veq}
 \end{equation}
 
 % ============================================================
-\section{Puesta en marcha del equipo}
+\section{Puesta en marcha del equipo}\label{sec:puestaenmarcha}
 % ============================================================
 
 Toda la comunicación serie con el Arduino está encapsulada en el bloque
@@ -288,11 +269,50 @@ constante y conectar bloques adicionales según necesite en cada apartado.
 \end{notabox}
 
 % ============================================================
+\section{Verificación del equipo}
+% ============================================================
+
+Antes de comenzar los apartados de medida, compruebe que el equipo funciona
+correctamente siguiendo estos pasos:
+
+\begin{enumerate}
+  \item Asegúrese de haber completado la puesta en marcha de la
+        sección~\ref{sec:puestaenmarcha} (Arduino conectado, puerto seleccionado).
+
+  \item En el modelo de Simulink, haga doble clic sobre el bloque \textbf{Constant}
+        y fije su valor a $u = 50$.
+
+  \item Ajuste el tiempo de parada de la simulación a \textbf{5~s} en la barra de
+        herramientas (\emph{Stop Time}).
+
+  \item Pulse \textbf{Run}. El motor debe girar a velocidad aproximadamente constante.
+        El Scope debe mostrar:
+        \begin{itemize}[noitemsep]
+          \item $\theta$: una rampa creciente (el eje gira acumulando ángulo).
+          \item $\omega$: una señal aproximadamente constante, con pequeñas
+                fluctuaciones debidas al ruido del encoder.
+        \end{itemize}
+
+  \item Espere a que la simulación termine (5~s) o pulse \textbf{Stop}.
+        Cambie $u = -50$ y vuelva a pulsar \textbf{Run}: el motor debe girar
+        en sentido contrario ($\theta$ decrece, $\omega$ es negativo).
+
+  \item Fije $u = 0$ y compruebe que el motor se detiene (puede tardar unos
+        instantes por inercia).
+\end{enumerate}
+
+\begin{notabox}
+  Si el motor no gira pero el Scope sí muestra señales, compruebe la alimentación
+  de 12~V del driver. Si el Scope no muestra nada, vuelva al bloque Motor\_CC
+  y verifique el puerto serie seleccionado.
+\end{notabox}
+
+% ============================================================
 \section{Señal de actuación y lectura del sensor}
 % ============================================================
 
-En este apartado va a comprobar el funcionamiento básico del equipo: aplicar una
-señal de control constante y observar la respuesta del motor.
+Una vez verificado el funcionamiento, en este apartado va a medir la respuesta del
+motor ante distintas señales de control.
 
 \begin{enumerate}
   \item Configure el bloque \emph{Constant} con el valor $u = 50$.
