@@ -197,6 +197,12 @@ ajuste.
 | **Tunable** | `on` | Permite cambiar el puerto mientras la simulación está parada sin necesidad de recompilar |
 | **Evaluate** | *(vacío)* | El valor se trata como cadena de texto, no se evalúa como expresión MATLAB |
 
+> **Sobre el campo *Type Options*:** la captura muestra la lista de puertos que tenía el
+> ordenador la última vez que se ejecutó el `OpenFcn`. Al crear la máscara desde cero, ese
+> campo puede dejarse con cualquier valor de ejemplo (p. ej. `COM1`). El `OpenFcn` lo
+> sobreescribirá automáticamente en tiempo real cada vez que se abra el diálogo — no hace
+> falta rellenarlo a mano.
+
 4. Haz clic en **Save Mask** para guardar los cambios.
 
 #### Paso 3 — La pestaña *Code* del Mask Editor **no** es donde va el `OpenFcn`
@@ -282,6 +288,16 @@ Para que esta propagación funcione en todas las versiones fue necesario:
 - Verificar el comportamiento en cada versión de MATLAB disponible en el laboratorio.
 - Usar `portParam.TypeOptions` en lugar de `set_param` directo, porque la asignación
   directa falla cuando el valor aún no está entre las opciones del desplegable.
+
+---
+
+<br>
+
+---
+
+<p align="center">
+  🇬🇧 &nbsp;&nbsp; <strong>E N G L I S H</strong> &nbsp;&nbsp; 🇬🇧
+</p>
 
 ---
 
@@ -464,6 +480,11 @@ Useful for porting the model to another project or understanding exactly what ea
 | **Value** | *(anything)* | Overwritten by `OpenFcn` when the dialog opens; the saved value does not matter |
 | **Tunable** | `on` | Allows changing the port without recompiling while the simulation is stopped |
 | **Evaluate** | *(empty)* | Value is treated as a plain string, not evaluated as a MATLAB expression |
+
+> **About the *Type Options* field:** the screenshot shows the port list that was on the
+> computer the last time the `OpenFcn` ran. When creating the mask from scratch, that field
+> can be left with any placeholder value (e.g. `COM1`). The `OpenFcn` overwrites it
+> automatically at runtime every time the dialog opens — you never need to fill it in manually.
 
 4. Click **Save Mask**.
 
