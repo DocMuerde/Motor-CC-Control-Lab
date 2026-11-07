@@ -21,7 +21,7 @@ No se necesitan otras toolboxes (ni Control System, ni Simulink Real-Time, ni si
 
 #### Nivel raíz
 
-![Nivel raíz del modelo Simulink — Pulse Generator, Constant, Sum, bloque Motor_CC y los dos Scopes](../../docs/images/matlab/01_root_level.png)
+<!-- IMAGEN: captura del nivel raíz del modelo (Pulse Generator + Constant + Sum + bloque Motor_CC + los dos Scopes) -->
 
 El nivel raíz es el **espacio de trabajo del estudiante**. Viene precargado con un ejemplo de
 lazo abierto para verificar el funcionamiento antes de añadir ningún controlador:
@@ -42,7 +42,7 @@ lazo abierto para verificar el funcionamiento antes de añadir ningún controlad
 
 #### El bloque `Motor_CC` — vista exterior
 
-![Bloque Motor_CC con el diálogo de máscara abierto — desplegable de selección de puerto serie](../../docs/images/matlab/02_motor_cc_mask_dialog.png)
+<!-- IMAGEN: captura del bloque Motor_CC en el nivel raíz con el diálogo de máscara abierto, mostrando el desplegable de selección de puerto -->
 
 `Motor_CC` es un **subsistema con máscara** que presenta al exterior una interfaz de un solo
 parámetro — el puerto serie del Arduino — y dos salidas: ángulo y velocidad.
@@ -65,7 +65,7 @@ de puerto](#selección-automática-de-puerto-el-openFcn)).
 
 #### Interior del bloque `Motor_CC`
 
-![Interior del subsistema Motor_CC con los bloques Serial Configuration, Serial Send y Serial Receive del Instrument Control Toolbox](../../docs/images/matlab/03_motor_cc_interior.png)
+<!-- IMAGEN: captura del interior del subsistema Motor_CC (doble clic → "Look Under Mask") con los tres bloques del Instrument Control Toolbox visibles: Serial Configuration, Serial Send, Serial Receive -->
 
 Dentro del subsistema hay **seis elementos**:
 
@@ -116,7 +116,7 @@ cada bloque. Estos valores son los que están guardados en `MotorCC_V3.slx`.
 
 #### Serial Configuration
 
-![Diálogo de configuración del bloque Serial Configuration (115200 baud, 8N1, little-endian, timeout 10 s)](../../docs/images/matlab/04_serial_configuration.png)
+<!-- IMAGEN: captura del diálogo de configuración del bloque Serial Configuration -->
 
 | Parámetro | Valor | Descripción |
 |-----------|-------|-------------|
@@ -132,7 +132,7 @@ cada bloque. Estos valores son los que están guardados en `MotorCC_V3.slx`.
 
 #### Serial Send
 
-![Diálogo del bloque Serial Send (cabecera 'A', terminador LF, modo bloqueante)](../../docs/images/matlab/05_serial_send.png)
+<!-- IMAGEN: captura del diálogo del bloque Serial Send -->
 
 | Parámetro | Valor | Descripción |
 |-----------|-------|-------------|
@@ -154,7 +154,7 @@ Total: 4 bytes por ciclo (100 Hz → 400 bytes/s, muy por debajo de la capacidad
 
 #### Serial Receive
 
-![Diálogo del bloque Serial Receive (cabecera 'V', 3 floats, 100 Hz, modo bloqueante)](../../docs/images/matlab/06_serial_receive.png)
+<!-- IMAGEN: captura del diálogo del bloque Serial Receive -->
 
 | Parámetro | Valor | Descripción |
 |-----------|-------|-------------|
@@ -266,7 +266,7 @@ No other toolboxes needed (no Control System, Simulink Real-Time, or similar).
 
 #### Root level
 
-![Simulink model root level — Pulse Generator, Constant, Sum, Motor_CC block and two Scopes](../../docs/images/matlab/01_root_level.png)
+<!-- IMAGE: screenshot of the model root level (Pulse Generator + Constant + Sum + Motor_CC block + two Scopes) -->
 
 The root level is the **student's workspace**. It ships with an open-loop test example to
 verify communication before adding any controller:
@@ -287,7 +287,7 @@ verify communication before adding any controller:
 
 #### The `Motor_CC` block — external view
 
-![Motor_CC block with mask dialog open — auto-populated serial port dropdown](../../docs/images/matlab/02_motor_cc_mask_dialog.png)
+<!-- IMAGE: screenshot of the Motor_CC block at root level with the mask dialog open, showing the port selection dropdown -->
 
 `Motor_CC` is a **masked subsystem** that presents a single-parameter interface to the
 outside — the Arduino serial port — and two outputs: angle and velocity.
@@ -309,7 +309,7 @@ outside — the Arduino serial port — and two outputs: angle and velocity.
 
 #### Inside the `Motor_CC` block
 
-![Motor_CC subsystem interior showing Serial Configuration, Serial Send and Serial Receive (Instrument Control Toolbox)](../../docs/images/matlab/03_motor_cc_interior.png)
+<!-- IMAGE: screenshot of the Motor_CC subsystem interior (double-click → "Look Under Mask") showing the three Instrument Control Toolbox blocks: Serial Configuration, Serial Send, Serial Receive -->
 
 Inside the subsystem there are **six elements**:
 
@@ -339,7 +339,7 @@ Serial Configuration — priority −200,000 → runs before any other block
 
 #### Serial Configuration
 
-![Serial Configuration block dialog (115200 baud, 8N1, little-endian, 10 s timeout)](../../docs/images/matlab/04_serial_configuration.png)
+<!-- IMAGE: screenshot of the Serial Configuration block dialog -->
 
 | Parameter | Value | Notes |
 |-----------|-------|-------|
@@ -355,7 +355,7 @@ Serial Configuration — priority −200,000 → runs before any other block
 
 #### Serial Send
 
-![Serial Send block dialog (header 'A', LF terminator, blocking mode)](../../docs/images/matlab/05_serial_send.png)
+<!-- IMAGE: screenshot of the Serial Send block dialog -->
 
 | Parameter | Value | Notes |
 |-----------|-------|-------|
@@ -373,7 +373,7 @@ Serial Configuration — priority −200,000 → runs before any other block
 
 #### Serial Receive
 
-![Serial Receive block dialog (header 'V', 3 floats, 100 Hz, blocking mode)](../../docs/images/matlab/06_serial_receive.png)
+<!-- IMAGE: screenshot of the Serial Receive block dialog -->
 
 | Parameter | Value | Notes |
 |-----------|-------|-------|
@@ -446,3 +446,223 @@ The solution: the `OpenFcn` updates the mask's `PortName` parameter, and when th
 OK, Simulink propagates that value to the interior blocks through the mask configuration. Making
 this propagation reliable across MATLAB versions required naming the mask parameter exactly as
 the ICT blocks expect, and validating the behaviour on each available version.
+
+---
+
+### Cómo está construida la máscara — guía de reproducción
+
+Esta sección explica paso a paso cómo recrear la máscara del bloque `Motor_CC` desde cero.
+Es útil si se quiere portar el modelo a otro proyecto o entender exactamente qué hace cada
+ajuste.
+
+#### Paso 1 — Abrir el editor de máscara
+
+1. Clic derecho sobre el bloque `Motor_CC` en el nivel raíz.
+2. En el menú contextual: **Mask → Edit Mask…**
+3. Se abre la ventana **Mask Editor: Motor_CC** con cuatro pestañas:
+   *Parameters & Dialog*, *Code*, *Constraints* e *Icon*.
+
+#### Paso 2 — Crear el parámetro `PortName` (pestaña *Parameters & Dialog*)
+
+![Vista general de la pestaña Parameters & Dialog — grupo ParameterGroupVar con el elemento Arduino Port: / PortName](../../docs/images/matlab/07_mask_editor_parameters_group.png)
+
+1. Haz clic en la pestaña **Parameters & Dialog**.
+2. En el panel izquierdo (*Controls*) arrastra un control **Popup** al área central.
+   Simulink crea una nueva fila en la tabla.
+3. Configura sus propiedades en el *Property Editor* (panel derecho):
+
+![Propiedades del parámetro PortName — tipo popup, variable PortName, prompt "Arduino Port:"](../../docs/images/matlab/08_mask_editor_portname_props.png)
+
+| Propiedad | Valor | Por qué |
+|-----------|-------|---------|
+| **Name** | `PortName` | Nombre exacto de la variable MATLAB que el `OpenFcn` modifica con `get/set_param` y `TypeOptions` |
+| **Prompt** | `Arduino Port:` | Texto que ve el usuario en el diálogo de máscara |
+| **Type** | `popup` | Muestra un desplegable; el `OpenFcn` rellena sus opciones en tiempo real |
+| **Value** | *(cualquiera)* | El `OpenFcn` lo sobreescribe al abrir; el valor guardado no importa |
+| **Tunable** | `on` | Permite cambiar el puerto mientras la simulación está parada sin necesidad de recompilar |
+| **Evaluate** | *(vacío)* | El valor se trata como cadena de texto, no se evalúa como expresión MATLAB |
+
+4. Haz clic en **Save Mask** para guardar los cambios.
+
+#### Paso 3 — La pestaña *Code* del Mask Editor **no** es donde va el `OpenFcn`
+
+![Pestaña Code del Mask Editor — el campo Initialization está vacío; el OpenFcn no va aquí](../../docs/images/matlab/09_mask_editor_code_tab.png)
+
+Este es el error más habitual. La pestaña **Code** del Mask Editor contiene el
+*Initialization code* de la máscara (código que se ejecuta al compilar el modelo, antes
+de la simulación). El `OpenFcn` **no va aquí**.
+
+El `OpenFcn` es un *callback de bloque*, no de máscara, y se configura en un lugar
+completamente distinto (ver paso siguiente).
+
+#### Paso 4 — Añadir el `OpenFcn` en las propiedades del bloque
+
+![Ventana Block Properties: Motor_CC, pestaña Callbacks, OpenFcn seleccionado con el código visible](../../docs/images/matlab/10_block_properties_openfcn.png)
+
+1. Cierra el Mask Editor (o déjalo abierto, no importa).
+2. Clic derecho sobre el bloque `Motor_CC` → **Properties…**
+   *(cuidado: no "Mask → Edit Mask", sino "Properties" a secas)*
+3. Se abre **Block Properties: Motor_CC**. Ve a la pestaña **Callbacks**.
+4. En la lista de la izquierda (*Callback functions list*) selecciona **`OpenFcn`**.
+   El asterisco `*` al lado del nombre indica que ya tiene código guardado.
+5. En el panel derecho (*Content of callback function: "OpenFcn"*) pega el código:
+
+```matlab
+% Escanear puertos serie disponibles al abrir el diálogo
+try
+    availablePorts = cellstr(serialportlist('available'));
+catch
+    serialInfo = instrhwinfo('serial');
+    availablePorts = serialInfo.AvailableSerialPorts;
+end
+if isempty(availablePorts)
+    availablePorts = {'No Ports Available'};
+end
+maskObj = Simulink.Mask.get(gcb);
+portParam = maskObj.getParameter('PortName');
+portParam.TypeOptions = availablePorts;
+currentPort = get_param(gcb, 'PortName');
+if ~ismember(currentPort, availablePorts)
+    set_param(gcb, 'PortName', availablePorts{1});
+end
+
+open_system(gcb, 'mask');
+```
+
+6. Haz clic en **OK**. Guarda el modelo (`Ctrl+S`).
+
+> **Por qué `open_system(gcb, 'mask')` es obligatorio:**
+> el `OpenFcn` *sustituye* al comportamiento por defecto del doble clic. Si no se llama
+> explícitamente a `open_system`, el diálogo de máscara nunca aparece.
+
+#### Por qué propagar el puerto fue tan complicado
+
+Los bloques del Instrument Control Toolbox (`Serial Configuration`, `Serial Send`,
+`Serial Receive`) guardan el puerto serie bajo **tres nombres de parámetro distintos**
+según la versión de MATLAB instalada: `PortSel` (versiones antiguas), `Port` (intermedias)
+y `ComPort` (recientes). Ninguno de estos parámetros acepta una variable del workspace de
+la máscara directamente, a diferencia de los bloques nativos de Simulink.
+
+La solución adoptada:
+
+1. La máscara expone **un único parámetro** (`PortName`, tipo `popup`).
+2. El `OpenFcn` actualiza las opciones de ese desplegable con los puertos reales del sistema
+   justo antes de que el usuario vea el diálogo.
+3. Cuando el usuario selecciona un puerto y pulsa **OK**, Simulink propaga el valor de
+   `PortName` a los bloques interiores a través de la configuración de la máscara.
+
+Para que esta propagación funcione en todas las versiones fue necesario:
+- Nombrar el parámetro de máscara exactamente `PortName` (el nombre que los bloques ICT
+  buscan internamente según la versión).
+- Verificar el comportamiento en cada versión de MATLAB disponible en el laboratorio.
+- Usar `portParam.TypeOptions` en lugar de `set_param` directo, porque la asignación
+  directa falla cuando el valor aún no está entre las opciones del desplegable.
+
+---
+
+### How the mask is built — reproduction guide
+
+This section explains step by step how to recreate the `Motor_CC` block mask from scratch.
+Useful for porting the model to another project or understanding exactly what each setting does.
+
+#### Step 1 — Open the Mask Editor
+
+1. Right-click the `Motor_CC` block at root level.
+2. In the context menu: **Mask → Edit Mask…**
+3. The **Mask Editor: Motor_CC** window opens with four tabs:
+   *Parameters & Dialog*, *Code*, *Constraints* and *Icon*.
+
+#### Step 2 — Create the `PortName` parameter (*Parameters & Dialog* tab)
+
+![Parameters & Dialog tab overview — ParameterGroupVar group containing Arduino Port: / PortName](../../docs/images/matlab/07_mask_editor_parameters_group.png)
+
+1. Click the **Parameters & Dialog** tab.
+2. In the left panel (*Controls*) drag a **Popup** control into the central table area.
+   Simulink creates a new row.
+3. Set its properties in the *Property Editor* (right panel):
+
+![PortName parameter properties — type popup, variable PortName, prompt "Arduino Port:"](../../docs/images/matlab/08_mask_editor_portname_props.png)
+
+| Property | Value | Why |
+|----------|-------|-----|
+| **Name** | `PortName` | Exact variable name the `OpenFcn` reads and writes via `get/set_param` and `TypeOptions` |
+| **Prompt** | `Arduino Port:` | Label shown to the user in the mask dialog |
+| **Type** | `popup` | Renders a dropdown; the `OpenFcn` fills its options at runtime |
+| **Value** | *(anything)* | Overwritten by `OpenFcn` when the dialog opens; the saved value does not matter |
+| **Tunable** | `on` | Allows changing the port without recompiling while the simulation is stopped |
+| **Evaluate** | *(empty)* | Value is treated as a plain string, not evaluated as a MATLAB expression |
+
+4. Click **Save Mask**.
+
+#### Step 3 — The Mask Editor *Code* tab is **not** where the `OpenFcn` goes
+
+![Mask Editor Code tab — the Initialization field is empty; the OpenFcn does not go here](../../docs/images/matlab/09_mask_editor_code_tab.png)
+
+This is the most common mistake. The **Code** tab of the Mask Editor holds the mask's
+*Initialization code* — code that runs at model compile time, before simulation starts.
+The `OpenFcn` does **not** go here.
+
+The `OpenFcn` is a *block callback*, not a mask callback, and it is configured in a
+completely different place (see next step).
+
+#### Step 4 — Add the `OpenFcn` in the block properties
+
+![Block Properties: Motor_CC window, Callbacks tab, OpenFcn selected with the code visible](../../docs/images/matlab/10_block_properties_openfcn.png)
+
+1. Close the Mask Editor (or leave it open, it does not matter).
+2. Right-click the `Motor_CC` block → **Properties…**
+   *(careful: not "Mask → Edit Mask" — just "Properties")*
+3. **Block Properties: Motor_CC** opens. Go to the **Callbacks** tab.
+4. In the left list (*Callback functions list*) select **`OpenFcn`**.
+   The asterisk `*` next to the name means it already has saved code.
+5. In the right panel (*Content of callback function: "OpenFcn"*) paste the code:
+
+```matlab
+% Scan available serial ports when the dialog opens
+try
+    availablePorts = cellstr(serialportlist('available'));
+catch
+    serialInfo = instrhwinfo('serial');
+    availablePorts = serialInfo.AvailableSerialPorts;
+end
+if isempty(availablePorts)
+    availablePorts = {'No Ports Available'};
+end
+maskObj = Simulink.Mask.get(gcb);
+portParam = maskObj.getParameter('PortName');
+portParam.TypeOptions = availablePorts;
+currentPort = get_param(gcb, 'PortName');
+if ~ismember(currentPort, availablePorts)
+    set_param(gcb, 'PortName', availablePorts{1});
+end
+
+open_system(gcb, 'mask');
+```
+
+6. Click **OK**. Save the model (`Ctrl+S`).
+
+> **Why `open_system(gcb, 'mask')` is mandatory:**
+> the `OpenFcn` *replaces* the default double-click behaviour. Without explicitly calling
+> `open_system`, the mask dialog never appears.
+
+#### Why port propagation was so hard
+
+The Instrument Control Toolbox blocks (`Serial Configuration`, `Serial Send`,
+`Serial Receive`) store the serial port under **three different parameter names** depending
+on the installed MATLAB version: `PortSel` (old), `Port` (mid), `ComPort` (recent).
+None of these parameters resolves mask workspace variables the way native Simulink blocks do.
+
+The solution:
+
+1. The mask exposes **one single parameter** (`PortName`, type `popup`).
+2. The `OpenFcn` updates that dropdown's options with the system's real ports
+   right before the user sees the dialog.
+3. When the user picks a port and clicks **OK**, Simulink propagates `PortName`'s value
+   to the interior blocks through the mask configuration.
+
+To make propagation reliable across all MATLAB versions it was necessary to:
+- Name the mask parameter exactly `PortName` (the name ICT blocks look for internally,
+  depending on the version).
+- Verify the behaviour on every MATLAB version available in the lab.
+- Use `portParam.TypeOptions` instead of a direct `set_param`, because direct assignment
+  fails when the value is not yet among the dropdown's options.
