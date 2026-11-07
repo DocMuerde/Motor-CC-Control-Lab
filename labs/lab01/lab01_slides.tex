@@ -136,7 +136,8 @@ El conjunto motor+reductora se modela como un sistema de \textbf{primer orden}:
   \textbf{Señal de control:}
   \[ V_{eq} = u \cdot \frac{V_{alim}}{255} \]
   $u\in[-255,\;255]$; $V_{alim}$ depende del modo:
-  \begin{itemize}[noitemsep,topsep=2pt]
+  \begin{itemize}
+    \setlength{\itemsep}{2pt}\setlength{\topsep}{2pt}
     \item \textbf{Batería:} $V_{alim}\approx8{,}4\,\text{V}$
           ($V_{max}=9\,\text{V}$)
     \item \textbf{USB:} $V_{alim}=5\,\text{V}$
