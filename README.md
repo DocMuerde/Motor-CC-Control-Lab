@@ -43,28 +43,11 @@ El equipo destaca en cuatro aspectos clave:
 
 ### Esquema del sistema
 
-```
-  PC (MATLAB)
-      │  Comunicación serie (USB)
-      ▼
-  Arduino
-  ┌─────────────────────────────────┐
-  │  · Lee encoder AS5047P (SPI)    │
-  │  · Envía posición a MATLAB      │
-  │  · Recibe acción de control     │
-  │  · Genera PWM → TB6612FNG        │
-  └────────────┬────────────────────┘
-               │ PWM + dirección
-               ▼
-           TB6612FNG (driver)
-               │
-               ▼
-        Motor Maxon + reductora
-               │
-        Disco de inercia
-               │
-           AS5047P (encoder magnético)
-```
+<p align="center">
+  <img src="docs/images/diagram_sistema_es.png"
+       alt="Esquema del sistema Motor CC"
+       width="820">
+</p>
 
 ### Estructura del repositorio
 
