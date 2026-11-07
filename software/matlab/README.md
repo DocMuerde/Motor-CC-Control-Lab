@@ -69,43 +69,8 @@ de puerto](#selección-automática-de-puerto-el-openFcn)).
 
 Dentro del subsistema hay **seis elementos**:
 
-```
-Entrada u
-    │
-    ▼
-┌─────────────┐    ┌──────────────────┐
-│ Saturation  │───▶│ Zero-Order Hold  │   Ts = 10 ms
-│ [−255, 255] │    │   (Ts = 0.01 s)  │
-└─────────────┘    └────────┬─────────┘
-                            │
-                   ┌────────▼─────────┐
-                   │ Data Type Conv.  │   double → int16
-                   └────────┬─────────┘
-                            │
-                   ┌────────▼─────────┐    'A' | int16(u) | '\n'
-                   │  Serial Send     │ ──────────────────────────▶ Arduino (USB)
-                   └──────────────────┘
-                                                                         │
-                                              'V' | float×3 | '\n'      │
-                   ┌──────────────────┐ ◀──────────────────────────────-┘
-                   │  Serial Receive  │
-                   └────────┬─────────┘
-                            │
-                   ┌────────▼─────────┐
-                   │ Data Type Conv.  │   single → double
-                   └────────┬─────────┘
-                            │
-                   ┌────────▼─────────┐
-                   │  Demux (1×3)     │
-                   └──┬───┬───┬───────┘
-                      │   │   │
-                   Angle Speed Display
-                   (°)  (°/s) (PWM eco)
+![Diagrama de flujo de señales en el interior del subsistema Motor\_CC](../../docs/images/matlab/diagram_motor_cc_es.png)
 
-┌────────────────────────────────────────┐
-│  Serial Configuration (inicialización) │  prioridad −200 000 → se ejecuta antes
-└────────────────────────────────────────┘  que cualquier otro bloque
-```
 
 ---
 
@@ -313,8 +278,8 @@ outside — the Arduino serial port — and two outputs: angle and velocity.
 
 Inside the subsystem there are **six elements**:
 
-**Send path** — u → Arduino:
-```
+![Motor\_CC subsystem signal flow diagram](../../docs/images/matlab/diagram_motor_cc_en.png)
+
 u → Saturation[−255,255] → Zero-Order Hold (Ts=0.01 s) → int16 conversion
   → Serial Send → 'A' | int16(u) | '\n' → Arduino over USB
 ```
