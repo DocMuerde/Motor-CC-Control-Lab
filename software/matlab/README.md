@@ -21,7 +21,7 @@ No se necesitan otras toolboxes (ni Control System, ni Simulink Real-Time, ni si
 
 #### Nivel raíz
 
-<!-- IMAGEN: captura del nivel raíz del modelo (Pulse Generator + Constant + Sum + bloque Motor_CC + los dos Scopes) -->
+![Nivel raíz del modelo Simulink — Pulse Generator, Constant, Sum, bloque Motor_CC y los dos Scopes](../../docs/images/matlab/01_root_level.png)
 
 El nivel raíz es el **espacio de trabajo del estudiante**. Viene precargado con un ejemplo de
 lazo abierto para verificar el funcionamiento antes de añadir ningún controlador:
@@ -42,7 +42,7 @@ lazo abierto para verificar el funcionamiento antes de añadir ningún controlad
 
 #### El bloque `Motor_CC` — vista exterior
 
-<!-- IMAGEN: captura del bloque Motor_CC en el nivel raíz con el diálogo de máscara abierto, mostrando el desplegable de selección de puerto -->
+![Bloque Motor_CC con el diálogo de máscara abierto — desplegable de selección de puerto serie](../../docs/images/matlab/02_motor_cc_mask_dialog.png)
 
 `Motor_CC` es un **subsistema con máscara** que presenta al exterior una interfaz de un solo
 parámetro — el puerto serie del Arduino — y dos salidas: ángulo y velocidad.
@@ -65,7 +65,7 @@ de puerto](#selección-automática-de-puerto-el-openFcn)).
 
 #### Interior del bloque `Motor_CC`
 
-<!-- IMAGEN: captura del interior del subsistema Motor_CC (doble clic → "Look Under Mask") con los tres bloques del Instrument Control Toolbox visibles: Serial Configuration, Serial Send, Serial Receive -->
+![Interior del subsistema Motor_CC con los bloques Serial Configuration, Serial Send y Serial Receive del Instrument Control Toolbox](../../docs/images/matlab/03_motor_cc_interior.png)
 
 Dentro del subsistema hay **seis elementos**:
 
@@ -116,7 +116,7 @@ cada bloque. Estos valores son los que están guardados en `MotorCC_V3.slx`.
 
 #### Serial Configuration
 
-<!-- IMAGEN: captura del diálogo de configuración del bloque Serial Configuration -->
+![Diálogo de configuración del bloque Serial Configuration (115200 baud, 8N1, little-endian, timeout 10 s)](../../docs/images/matlab/04_serial_configuration.png)
 
 | Parámetro | Valor | Descripción |
 |-----------|-------|-------------|
@@ -132,7 +132,7 @@ cada bloque. Estos valores son los que están guardados en `MotorCC_V3.slx`.
 
 #### Serial Send
 
-<!-- IMAGEN: captura del diálogo del bloque Serial Send -->
+![Diálogo del bloque Serial Send (cabecera 'A', terminador LF, modo bloqueante)](../../docs/images/matlab/05_serial_send.png)
 
 | Parámetro | Valor | Descripción |
 |-----------|-------|-------------|
@@ -154,7 +154,7 @@ Total: 4 bytes por ciclo (100 Hz → 400 bytes/s, muy por debajo de la capacidad
 
 #### Serial Receive
 
-<!-- IMAGEN: captura del diálogo del bloque Serial Receive -->
+![Diálogo del bloque Serial Receive (cabecera 'V', 3 floats, 100 Hz, modo bloqueante)](../../docs/images/matlab/06_serial_receive.png)
 
 | Parámetro | Valor | Descripción |
 |-----------|-------|-------------|
@@ -266,7 +266,7 @@ No other toolboxes needed (no Control System, Simulink Real-Time, or similar).
 
 #### Root level
 
-<!-- IMAGE: screenshot of the model root level (Pulse Generator + Constant + Sum + Motor_CC block + two Scopes) -->
+![Simulink model root level — Pulse Generator, Constant, Sum, Motor_CC block and two Scopes](../../docs/images/matlab/01_root_level.png)
 
 The root level is the **student's workspace**. It ships with an open-loop test example to
 verify communication before adding any controller:
@@ -287,7 +287,7 @@ verify communication before adding any controller:
 
 #### The `Motor_CC` block — external view
 
-<!-- IMAGE: screenshot of the Motor_CC block at root level with the mask dialog open, showing the port selection dropdown -->
+![Motor_CC block with mask dialog open — auto-populated serial port dropdown](../../docs/images/matlab/02_motor_cc_mask_dialog.png)
 
 `Motor_CC` is a **masked subsystem** that presents a single-parameter interface to the
 outside — the Arduino serial port — and two outputs: angle and velocity.
@@ -309,7 +309,7 @@ outside — the Arduino serial port — and two outputs: angle and velocity.
 
 #### Inside the `Motor_CC` block
 
-<!-- IMAGE: screenshot of the Motor_CC subsystem interior (double-click → "Look Under Mask") showing the three Instrument Control Toolbox blocks: Serial Configuration, Serial Send, Serial Receive -->
+![Motor_CC subsystem interior showing Serial Configuration, Serial Send and Serial Receive (Instrument Control Toolbox)](../../docs/images/matlab/03_motor_cc_interior.png)
 
 Inside the subsystem there are **six elements**:
 
@@ -339,7 +339,7 @@ Serial Configuration — priority −200,000 → runs before any other block
 
 #### Serial Configuration
 
-<!-- IMAGE: screenshot of the Serial Configuration block dialog -->
+![Serial Configuration block dialog (115200 baud, 8N1, little-endian, 10 s timeout)](../../docs/images/matlab/04_serial_configuration.png)
 
 | Parameter | Value | Notes |
 |-----------|-------|-------|
@@ -355,7 +355,7 @@ Serial Configuration — priority −200,000 → runs before any other block
 
 #### Serial Send
 
-<!-- IMAGE: screenshot of the Serial Send block dialog -->
+![Serial Send block dialog (header 'A', LF terminator, blocking mode)](../../docs/images/matlab/05_serial_send.png)
 
 | Parameter | Value | Notes |
 |-----------|-------|-------|
@@ -373,7 +373,7 @@ Serial Configuration — priority −200,000 → runs before any other block
 
 #### Serial Receive
 
-<!-- IMAGE: screenshot of the Serial Receive block dialog -->
+![Serial Receive block dialog (header 'V', 3 floats, 100 Hz, blocking mode)](../../docs/images/matlab/06_serial_receive.png)
 
 | Parameter | Value | Notes |
 |-----------|-------|-------|
