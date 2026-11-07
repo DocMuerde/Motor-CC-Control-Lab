@@ -28,10 +28,13 @@
 % ── Tablas ───────────────────────────────────────────────────────────────────
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{tabularx}
 \usepackage{multirow}
 \usepackage{longtable}
 
 % ── Código fuente ────────────────────────────────────────────────────────────
+\usepackage{float}
+\usepackage{caption}
 \usepackage{listings}
 \usepackage{courier}
 
@@ -133,6 +136,8 @@
   {\color{isablue}\rule{\linewidth}{2pt}}\\[0.5em]
   {\Huge\bfseries\color{isablue} Manual de Usuario}\\[0.3em]
   {\Large Equipo de Prácticas de Control de Motor CC}\\[0.3em]
+  {\color{isablue}\rule{\linewidth}{0.5pt}}\\[0.6em]
+  \includegraphics[width=0.72\linewidth]{equipo_render.png}\\[0.6em]
   {\color{isablue}\rule{\linewidth}{0.5pt}}\\[0.3em]
   {\normalsize Departamento de Ingeniería de Sistemas y Automática (ISA)\\
    Universidad de Sevilla \quad·\quad \href{mailto:ialvarado@us.es}{ialvarado@us.es}}
@@ -187,28 +192,63 @@ Placa shield & ISA custom & Apilable sobre el Arduino; integra driver + conector
 
 \begin{center}
 \begin{tikzpicture}[
-  block/.style={draw,rounded corners,fill=isagray,minimum width=3cm,minimum height=1cm,
-                align=center,font=\small},
-  arrow/.style={-{Stealth[length=6pt]},thick,isablue},
-  label/.style={font=\footnotesize\itshape,text=gray}
+  block/.style={draw,rounded corners,fill=isagray,minimum width=3.2cm,minimum height=1.1cm,
+                align=center,font=\small\bfseries},
+  arrow/.style={-{Stealth[length=7pt]},line width=1.6pt,isablue},
+  arrowback/.style={-{Stealth[length=7pt]},line width=1.6pt,isared},
+  lbl/.style={font=\footnotesize\bfseries, fill=white, draw=isablue!30,
+              rounded corners=2pt, inner sep=2pt, text=isablue}
 ]
-  \node[block,fill=isablue!15] (pc)     {PC\\(MATLAB/Simulink)};
-  \node[block,right=3cm of pc]  (ard)   {Arduino UNO\\+ Shield ISA};
-  \node[block,right=3cm of ard] (mot)   {Motor Maxon\\+ Reductora};
-  \node[block,below=1.4cm of mot](enc)  {Encoder AS5047P\\14 bits};
+  \node[block,fill=isablue!20,draw=isablue] (pc)  {PC\\[-1pt]{\small MATLAB/Simulink}};
+  \node[block,fill=isagray,draw=isablue, right=3.2cm of pc]  (ard) {Arduino UNO\\[-1pt]{\small + Shield ISA}};
+  \node[block,fill=isagray,draw=isablue, right=3.2cm of ard] (mot) {Motor Maxon\\[-1pt]{\small + Reductora}};
+  \node[block,fill=isagray,draw=isablue, below=1.6cm of mot] (enc) {Encoder\\[-1pt]{\small AS5047P 14\,bit}};
 
-  \draw[arrow] ([yshift=3pt]pc.east)  -- node[above,label]{PWM con signo (serie, 10 ms)} ([yshift=3pt]ard.west);
-  \draw[arrow] ([yshift=-3pt]ard.west)-- node[below,label]{angulo + velocidad} ([yshift=-3pt]pc.east);
-  \draw[arrow] (ard.east)  -- node[above,label]{PWM + direccion} (mot.west);
-  \draw[arrow] (enc.west)  -| ([xshift=0.6cm]ard.south) -- node[right,label,pos=0.5]{SPI} (ard.south);
-  \draw[arrow] (mot.south) -- (enc.north);
+  % PC → Arduino  (señal de control)
+  \draw[arrow] ([yshift=4pt]pc.east) --
+    node[above, lbl]{$u\in[-255,255]$} ([yshift=4pt]ard.west);
+
+  % Arduino → PC  (posición + velocidad)
+  \draw[arrowback] ([yshift=-4pt]ard.west) --
+    node[below, lbl, text=isared, draw=isared!40]{$\theta$\,[°] \;|\; $\omega$\,[°/s]} ([yshift=-4pt]pc.east);
+
+  % Arduino → Motor  (PWM + dirección)
+  \draw[arrow] (ard.east) --
+    node[above, lbl]{PWM + dir.} (mot.west);
+
+  % Motor → Encoder  (eje mecánico)
+  \draw[-,line width=1.2pt,black!50] (mot.south) -- (enc.north)
+    node[midway, right, font=\footnotesize\itshape, text=black!60]{eje};
+
+  % Encoder → Arduino  (SPI)
+  \draw[arrowback] (enc.west) -| ([xshift=0.8cm]ard.south) -- (ard.south)
+    node[near start, below, lbl, text=isared, draw=isared!40]{SPI\;(10\,ms)};
+
 \end{tikzpicture}
 \end{center}
 
+\smallskip
+{\footnotesize\textcolor{isablue}{$\longrightarrow$} Señal de control \quad
+ \textcolor{isared}{$\longrightarrow$} Medidas del sistema \quad
+ \textcolor{black!50}{---} Acoplamiento mecánico}
+
 \begin{infobox}
-El lazo de control completo reside en MATLAB. Arduino actúa únicamente como
-\textbf{interfaz hardware}: lee el encoder por SPI, calcula la velocidad como diferencia
-de posición dividida por $T_s = 0.01$ s, y aplica la señal de control al driver.
+El lazo de control completo reside en MATLAB. Arduino actúa como
+\textbf{interfaz hardware en tiempo real}: marca la cadencia del experimento
+mediante interrupciones del Timer2 cada \textbf{10\,ms} (100\,Hz), lee el encoder
+por SPI, calcula la velocidad numérica ($\Delta\theta/T_s$) y aplica al driver la
+señal de control recibida de MATLAB.
+
+\smallskip
+\textbf{Acumulación de ángulo:} el encoder AS5047P entrega el ángulo en el rango
+$[0^{\circ}, 360^{\circ})$ por vuelta. El firmware cuenta las vueltas completas y acumula el ángulo,
+de modo que la salida es un ángulo irrestricto $\in (-\infty, +\infty)$ que crece
+(o decrece) continuamente, sin saltos ni reinicios, igual que un encoder incremental.
+
+\smallskip
+\textbf{Observador de Luenberger} (desactivado por defecto): estima posición y
+velocidad filtradas en lugar de la derivada cruda. Se activa descomentando cuatro
+líneas al final del bloque de envío en \texttt{main.ino}.
 \end{infobox}
 
 \subsection{Parámetros del sistema}
@@ -220,12 +260,27 @@ de posición dividida por $T_s = 0.01$ s, y aplica la señal de control al drive
 \midrule
 Periodo de muestreo $T_s$ & 10 ms (100 Hz) & Fijado en el firmware de Arduino \\
 Velocidad de comunicación & 115\,200 baudios & USB/serie \\
-Rango señal de control & $u \in [-255,\,255]$ & Equivale a $\pm$12 V \\
-Resolución encoder & $\approx 0.022°$/paso & 16\,384 pasos/vuelta \\
-Modelo aproximado & $G(s)=K/(\tau s+1)$ & $K\approx3$, $\tau\approx0.07$ s a 12 V \\
+Rango señal de control & $u \in [-255,\,255]$ & Equivale a $\pm V_{\mathrm{alim}}$ (ver nota) \\
+Resolución encoder & $\approx 0.022^{\circ}$/paso & 16\,384 pasos/vuelta \\
+Modelo aproximado & $G(s)=K/(\tau s+1)$ & $K$ y $\tau$ dependen de $V_{\mathrm{alim}}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\begin{warnbox}[title={\faExclamationTriangle\quad Tensión de alimentación}]
+La señal $u \in [-255,\,255]$ se mapea a $\pm V_{\mathrm{alim}}$, que depende de cómo
+se alimente el equipo:
+\begin{itemize}[noitemsep,leftmargin=*]
+  \item \textbf{Alimentación externa (recomendado):} máx. \textbf{9 V}; en la práctica
+        se recomienda \textbf{8{,}4 V} para evitar calentamiento excesivo del motor.
+        $u = 255 \Rightarrow 8{,}4$ V.
+  \item \textbf{Solo USB (sin fuente externa):} el motor funciona a $\approx\pm5$ V.
+        Rango de velocidades reducido, pero perfectamente funcional para pruebas
+        y para las sesiones en las que no se dispone de fuente de alimentación.
+\end{itemize}
+El modelo $G(s)=K/(\tau s+1)$ debe identificarse experimentalmente para cada
+tensión de alimentación utilizada.
+\end{warnbox}
 
 % =============================================================================
 \section{Puesta en marcha inicial (una sola vez)}
@@ -262,8 +317,12 @@ Si se cambia de ordenador, hay que repetir este paso.
 
 \begin{successbox}
 Para verificar que el firmware funciona: abrir el \textbf{Monitor Serie} del IDE
-(\texttt{Ctrl+Shift+M}), configurarlo a \texttt{115200 baudios}. Deben aparecer caracteres
-binarios (datos en crudo) a 100 Hz. Si no aparece nada, revisar el cableado del encoder.
+(\texttt{Ctrl+Shift+M}), configurarlo a \texttt{115200 baudios}. Aparecerán
+\textbf{caracteres extraños o símbolos sin sentido} actualizándose a gran velocidad
+— esto es completamente normal. Los datos viajan codificados en binario, no como
+texto legible, de modo que el Monitor Serie los muestra como galimatías.
+Lo importante es que \emph{aparezca algo}: si la pantalla permanece en blanco,
+revisar el cableado del encoder.
 \end{successbox}
 
 \begin{warnbox}
@@ -280,7 +339,9 @@ Verificar que:
   \item La shield está bien asentada sobre el Arduino (todos los pines encajados).
   \item El cable del motor está conectado a los bornes del driver.
   \item El cable del encoder (conector JST de 7 pines) está conectado a la shield.
-  \item La alimentación de 12 V está conectada al borne de la shield.
+  \item La alimentación está conectada al conector de alimentación del propio Arduino
+        (recomendado: \textbf{8{,}4 V}; máx. 9 V). Si no se dispone de fuente externa,
+        el equipo funciona únicamente con el USB a $\approx$5 V.
 \end{itemize}
 
 % =============================================================================
@@ -294,70 +355,70 @@ ya configurado, tarda menos de dos minutos.
 
 \begin{enumerate}[leftmargin=*]
   \item Conectar el cable USB del Arduino al PC.
-  \item Conectar la fuente de alimentación de 12 V al equipo (borne de la shield).
+  \item \textbf{Opcional:} conectar la fuente de alimentación al conector barrel del Arduino
+        (recomendado \textbf{8{,}4 V}, máx. 9 V). Sin fuente externa el equipo funciona
+        con el USB solo ($\approx$5 V), con menor rango de velocidades.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.68\linewidth]{barrel_connector}
+  \caption*{\footnotesize\textit{Detalle del frontal del equipo. Izquierda: conector USB tipo B
+  (comunicación con el PC). Derecha: \textbf{conector barrel} (toma de alimentación DC
+  externa, 8{,}4\,V recomendados).}}
+\end{figure}
+
+\begin{enumerate}[leftmargin=*, start=3]
   \item El LED del Arduino debe encenderse. \faCheckCircle
 \end{enumerate}
 
 \begin{warnbox}
-Conectar siempre primero el USB y \emph{después} la alimentación de 12 V.
+Conectar siempre primero el USB y \emph{después} la alimentación externa.
 Al desconectar, en orden inverso: primero la alimentación, luego el USB.
 \end{warnbox}
 
-\subsection{Paso 2 — Identificar el puerto serie en MATLAB}
+\subsection{Paso 2 — Seleccionar el puerto serie desde Simulink}
+
+El puerto se configura directamente en el modelo Simulink, sin necesidad de comandos
+adicionales en MATLAB.
 
 \begin{enumerate}[leftmargin=*]
-  \item Abrir MATLAB.
-  \item Ejecutar en la ventana de comandos:
+  \item Abrir el modelo \texttt{software/matlab/MotorCC\_V3.slx}.
+  \item Hacer \textbf{doble clic} sobre el bloque central \textbf{``Motor CC''}.
+        Se abrirá una ventana con los parámetros del bloque, donde aparece
+        una lista desplegable con los puertos serie disponibles en el PC.
+  \item Seleccionar el puerto que corresponde al Arduino y pulsar \textbf{OK}.
 \end{enumerate}
 
-\begin{lstlisting}[style=matlab]
-serialportlist("available")
-\end{lstlisting}
-
-MATLAB devolverá algo parecido a:
-
-\begin{lstlisting}
-ans =
-  "/dev/tty.usbmodem1101"    % Mac
-  "COM5"                     % Windows
-\end{lstlisting}
-
-\begin{enumerate}[leftmargin=*,start=3]
-  \item Anotar el nombre del puerto del Arduino (normalmente el único nuevo que aparece
-        al conectar el USB).
+\begin{infobox}[title={\faInfoCircle\quad ¿Cuál es el puerto del Arduino?}]
+Si no es evidente qué puerto es el Arduino:
+\begin{enumerate}[noitemsep]
+  \item \textbf{Desconectar} el cable USB del Arduino.
+  \item Hacer doble clic sobre el bloque \textbf{``Motor CC''} y anotar los puertos que
+        aparecen en la lista.
+  \item \textbf{Reconectar} el USB del Arduino.
+  \item Volver a hacer doble clic sobre el bloque: el puerto nuevo que aparece ahora es
+        el del Arduino. Seleccionarlo y pulsar OK.
 \end{enumerate}
-
-\begin{infobox}
-En el archivo \texttt{software/matlab/config.m} hay un parámetro \texttt{PORT} que
-hay que actualizar con este valor si es diferente al configurado.
-El modelo Simulink \texttt{MotorCC\_V2.slx} detecta el puerto automáticamente en Mac/Linux;
-en Windows puede ser necesario configurarlo manualmente en ese archivo.
 \end{infobox}
 
-\subsection{Paso 3 — Lanzar el experimento desde MATLAB}
-
-\subsubsection*{Opción A: Script MATLAB (identificación / control manual)}
+\subsection{Paso 3 — Lanzar el experimento desde Simulink}
 
 \begin{enumerate}[leftmargin=*]
-  \item Abrir \texttt{software/matlab/config.m} y verificar/ajustar \texttt{PORT}.
-  \item Ejecutar el script correspondiente:
-\end{enumerate}
-
-\begin{lstlisting}[style=matlab]
-run('config.m')           % Cargar parametros globales
-run('identificacion.m')   % Experimento de identificacion por escalon
-% o bien:
-run('main_control.m')     % Lazo de control en tiempo real
-\end{lstlisting}
-
-\subsubsection*{Opción B: Modelo Simulink}
-
-\begin{enumerate}[leftmargin=*]
-  \item Abrir \texttt{software/matlab/MotorCC\_V2.slx}.
-  \item Pulsar el botón \textbf{Run} (\faPlay) en la barra de herramientas de Simulink.
+  \item Con el puerto ya seleccionado en el bloque \textbf{``Motor CC''} (Paso 2),
+        pulsar el botón \textbf{Run} (\faPlay) en la barra de herramientas de Simulink.
   \item El modelo se conecta automáticamente al Arduino y comienza a ejecutar el lazo de
         control a 100 Hz.
+  \item Para detener el experimento, pulsar el botón \textbf{Stop}.
 \end{enumerate}
+
+\begin{warnbox}[title={\faExclamationTriangle\quad Parar la simulación con el motor en reposo}]
+Detener la simulación (botón \textbf{Stop}) \emph{con el motor en movimiento} puede ser
+peligroso: al perderse la comunicación, el driver mantiene indefinidamente el
+\textbf{último valor de PWM} recibido y el motor continúa girando sin control.
+Esperar siempre a que el motor esté \textbf{parado} (señal de control $u = 0$)
+antes de pulsar Stop, o bien reducir $u$ a cero desde Simulink antes de detener.
+\end{warnbox}
 
 \begin{successbox}
 Si todo va bien, en el scope de Simulink se verán en tiempo real la posición angular
@@ -366,13 +427,17 @@ Si todo va bien, en el scope de Simulink se verán en tiempo real la posición a
 
 \subsection{Paso 4 — Guardar los datos del experimento}
 
-Los datos se almacenan automáticamente en el workspace de MATLAB.
-Al terminar el experimento, ejecutar:
+El modelo \texttt{MotorCC\_V3.slx} no incluye bloques de guardado de datos: se espera que
+cada alumno añada en su propio modelo los bloques necesarios (\emph{To Workspace},
+\emph{To File}, \emph{Scope} con autoguardado, etc.) según las instrucciones de cada
+práctica.
 
-\begin{lstlisting}[style=matlab]
-run('plot_results.m')   % Visualizar los resultados
-save('resultados_lab01.mat', 't', 'angulo', 'velocidad', 'u')  % Guardar
-\end{lstlisting}
+\begin{infobox}
+Las variables disponibles en cada ciclo de Simulink son la posición angular (°),
+la velocidad angular (°/s) y la señal de control $u \in [-255,255]$.
+Consultar el guión de cada práctica para saber exactamente qué bloques añadir y
+qué nombre dar a las variables exportadas.
+\end{infobox}
 
 % =============================================================================
 \section{Referencia rápida}
@@ -381,16 +446,19 @@ save('resultados_lab01.mat', 't', 'angulo', 'velocidad', 'u')  % Guardar
 \subsection{Protocolo de comunicación serie}
 
 \begin{center}
-\begin{tabular}{lll}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}lX@{}}
 \toprule
-\textbf{Dirección} & \textbf{Formato} & \textbf{Significado} \\
+\textbf{Dirección} & \textbf{Formato (binario) y significado} \\
 \midrule
-Arduino → MATLAB & \texttt{'V'} $|$ \texttt{float}(4B) $|$ \texttt{float}(4B) $|$ \texttt{float}(4B) $|$ \texttt{'\textbackslash n'} &
-  ángulo [°], velocidad [°/s], PWM aplicado \\
-MATLAB → Arduino & \texttt{'A'} $|$ \texttt{int16}(2B) $|$ \texttt{'\textbackslash n'} &
-  señal de control $u \in [-255,255]$ \\
+Arduino → MATLAB &
+  \texttt{\small 'V' | float(4\,B) | float(4\,B) | float(4\,B) | '\textbackslash n'} \\
+  & \quad\textit{ángulo [°] · velocidad [°/s] · PWM aplicado} \\[4pt]
+MATLAB → Arduino &
+  \texttt{\small 'A' | int16(2\,B) | '\textbackslash n'} \\
+  & \quad\textit{señal de control $u \in [-255,255]$} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{center}
 
 Frecuencia de envío: \textbf{100 Hz} ($T_s = 10$ ms). Formato binario (little-endian).
@@ -413,27 +481,22 @@ Frecuencia de envío: \textbf{100 Hz} ($T_s = 10$ ms). Formato binario (little-e
 \end{tabular}
 \end{center}
 
-\subsection{Parámetros de \texttt{config.m}}
+\subsection{Conversión señal de control → tensión media}
 
-\begin{lstlisting}[style=matlab]
-PORT  = '/dev/tty.usbmodem1101';  % Puerto serie (ajustar segun equipo)
-BAUD  = 115200;                    % Velocidad de comunicacion [baud]
-Ts    = 0.01;                      % Periodo de muestreo [s]
-Kp    = 1.0;                       % Ganancia proporcional
-Ki    = 0.5;                       % Ganancia integral
-Kd    = 0.0;                       % Ganancia derivativa
-T_exp = 10;                        % Duracion del experimento [s]
-\end{lstlisting}
-
-\subsection{Conversión señal de control → tensión}
-
-La señal de control $u \in [-255, 255]$ se mapea linealmente a la tensión del motor:
+El driver TB6612FNG conmuta la tensión de alimentación mediante PWM.
+La \textbf{tensión media} aplicada al motor es proporcional al ciclo de trabajo:
 
 \[
-  V_{\mathrm{motor}} = u \cdot \frac{12\,\mathrm{V}}{255} \approx u \cdot 0.047\,\mathrm{V}
+  \overline{V}_{\mathrm{motor}} = \frac{u}{255} \cdot V_{\mathrm{alim}}
 \]
 
-Ejemplos: $u = 255 \Rightarrow 12$ V, $u = 128 \Rightarrow 6$ V, $u = 0 \Rightarrow$ motor parado.
+donde $V_{\mathrm{alim}}$ es la tensión de alimentación del driver (\textbf{8{,}4\,V} recomendados
+con fuente externa; $\approx$\textbf{5\,V} solo con USB).
+
+\smallskip
+Ejemplos con $V_{\mathrm{alim}} = 8{,}4$\,V:
+$u = 255 \Rightarrow 8{,}4$\,V, $u = 128 \Rightarrow 4{,}2$\,V, $u = 0 \Rightarrow$ motor parado.
+El signo de $u$ determina la dirección de giro.
 
 % =============================================================================
 \section{Resolución de problemas frecuentes}
@@ -451,7 +514,7 @@ Ejemplos: $u = 255 \Rightarrow 12$ V, $u = 128 \Rightarrow 6$ V, $u = 0 \Rightar
 
 \begin{errorbox}[title={\faTimesCircle\quad El motor no gira}]
 \begin{itemize}[leftmargin=*,noitemsep]
-  \item Verificar que la alimentación de 12 V está encendida.
+  \item Verificar que la alimentación está encendida y correctamente conectada.
   \item Comprobar que la señal de control enviada desde MATLAB no es 0.
   \item Revisar que los cables del motor están bien conectados al driver.
   \item Si la señal es muy pequeña ($|u| < 30$) el motor puede no vencer la zona muerta
@@ -498,7 +561,7 @@ Ejemplos: $u = 255 \Rightarrow 12$ V, $u = 128 \Rightarrow 6$ V, $u = 0 \Rightar
 Repositorio completo & \href{https://github.com/DocMuerde/Motor-CC-Control-Lab}{\texttt{github.com/DocMuerde/Motor-CC-Control-Lab}} \\
 Firmware Arduino & \texttt{firmware/arduino/main/main.ino} \\
 Scripts MATLAB & \texttt{software/matlab/} \\
-Modelo Simulink & \texttt{software/matlab/MotorCC\_V2.slx} \\
+Modelo Simulink & \texttt{software/matlab/MotorCC\_V3.slx} \\
 Guía de prácticas Lab 01 & \texttt{labs/lab01/lab01\_isa.pdf} \\
 Guía de prácticas Lab 02 & \texttt{labs/lab02/lab02\_isa.pdf} \\
 Planos PCB & \texttt{hardware/pcb/} \\

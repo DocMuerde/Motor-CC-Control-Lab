@@ -40,3 +40,12 @@ desktop.ini
 # --- Python ---
 __pycache__/
 *.py[cod]
+
+# --- LaTeX ---
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
