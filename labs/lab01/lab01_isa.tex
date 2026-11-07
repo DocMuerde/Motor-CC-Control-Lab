@@ -95,6 +95,70 @@
 
 \vspace{6pt}
 
+
+% ============================================================
+\section{Introducción}
+% ============================================================
+
+Los motores de corriente continua (DC) son un ejemplo clásico de sistema
+dinámico lineal de primer orden. Su sencillez de modelado los convierte en
+el sistema de referencia en cursos de control automático y en una plataforma
+ideal para validar técnicas de identificación y diseño de controladores.
+
+\subsection{El equipo de prácticas ISA}
+
+El equipo utilizado en estas sesiones ha sido diseñado íntegramente por el
+Departamento de Ingeniería de Sistemas y Automática (ISA) de la Universidad
+de Sevilla. Integra en una placa compacta (\emph{shield} sobre Arduino~UNO)
+todos los elementos necesarios para controlar un motor CC real desde
+MATLAB/Simulink en tiempo real:
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Motor CC:} Maxon A-max~22 (5\,W, 12\,V) con reductora
+        planetaria GP~22B.  Proporciona el actuador mecánico del sistema.
+  \item \textbf{Encoder magnético:} AS5047P de 14\,bits (16\,384 pasos/vuelta),
+        sin contacto y sin rozamiento.  Mide posición~$\theta$ y, derivando,
+        velocidad~$\omega$.
+  \item \textbf{Driver de potencia:} TB6612FNG (puente en H dual de Toshiba).
+        Recibe una señal PWM del Arduino y aplica al motor una tensión
+        proporcional $V_{eq}\in[-12,\;12]$\,V.
+  \item \textbf{Arduino UNO:} microcontrolador que gestiona el encoder (SPI a
+        14\,bits), el driver (PWM a 31\,250\,Hz) y la comunicación con el PC
+        por USB/serie (115\,200~baud, $T_s = 10$\,ms).
+  \item \textbf{PC con MATLAB/Simulink:} ejecuta el algoritmo de control e
+        intercambia datos con el Arduino en tiempo real a 100\,Hz.
+\end{itemize}
+
+\subsection{Modelo del motor}
+
+Bajo ciertas hipótesis simplificadoras (corriente de armadura en régimen
+estacionario, dinámica eléctrica despreciable frente a la mecánica), el motor
+con su reductora se modela como un sistema de \textbf{primer orden}:
+
+\begin{equation}
+  G(s) = \frac{\Omega(s)}{V_{eq}(s)}
+       = \frac{K}{\tau s + 1}
+  \label{eq:modelo_motor}
+\end{equation}
+
+donde $K$ [°/s\,/\,V] es la ganancia estática del conjunto motor-reductora
+y $\tau$ [s] es la constante de tiempo mecánica.  El objetivo de la
+Práctica~1 es estimar experimentalmente ambos parámetros a partir de
+ensayos de escalón en lazo abierto.
+
+\subsection{Estructura de las prácticas}
+
+Las prácticas de laboratorio siguen la siguiente secuencia:
+
+\begin{enumerate}[noitemsep]
+  \item \textbf{Práctica 1 — Identificación:} caracterización dinámica del
+        motor mediante ensayos de escalón; estimación de~$K$ y~$\tau$.
+  \item \textbf{Práctica 2 — Control PID:} diseño y ajuste de un regulador
+        proporcional-integral-derivativo en tiempo discreto.
+  \item \textbf{Práctica 3 — Control por estados:} diseño por
+        realimentación de estados y observador de Luenberger.
+\end{enumerate}
+
 % ============================================================
 \section{Objetivos}
 % ============================================================
@@ -239,7 +303,7 @@ open('MotorCC_V3.slx')
 
   % Entrada
   \node[port, left=2.2cm of motor] (u_in) {$u\;[-255,\,255]$};
-  \draw[arr] (u_in) -- node[above,font=\scriptsize]{señal de\\[-3pt]control} (motor.west);
+  \draw[arr] (u_in) -- node[above,font=\scriptsize]{\shortstack{señal de\\control}} (motor.west);
 
   % Salidas
   \node[port, right=2.4cm of motor, yshift= 0.9cm] (th) {$\theta$ [°]};
