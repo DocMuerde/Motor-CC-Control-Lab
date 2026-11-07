@@ -134,8 +134,14 @@ El conjunto motor+reductora se modela como un sistema de \textbf{primer orden}:
   \end{itemize}
   \column{0.5\textwidth}
   \textbf{Señal de control:}
-  \[ V_{eq} = u \cdot \frac{12\,\text{V}}{255} \]
-  $u\in[-255,\;255]$ es el entero que envía Simulink.
+  \[ V_{eq} = u \cdot \frac{V_{alim}}{255} \]
+  $u\in[-255,\;255]$; $V_{alim}$ depende del modo:
+  \begin{itemize}[noitemsep,topsep=2pt]
+    \item \textbf{Batería:} $V_{alim}\approx8{,}4\,\text{V}$
+          ($V_{max}=9\,\text{V}$)
+    \item \textbf{USB:} $V_{alim}=5\,\text{V}$
+          (rango dinámico reducido)
+  \end{itemize}
 \end{columns}
 \vspace{6pt}
 \textbf{Objetivo de la Práctica~1:} estimar $K$ y $\tau$ mediante ensayos
@@ -337,7 +343,7 @@ Con el modelo en marcha:
 u_max  = 255;   % Valor maximo de la senal de control
 u_min  = -255;  % Valor minimo de la senal de control
 Ts     = 0.01;  % Periodo de muestreo [s]
-V_alim = 12;    % Tension de alimentacion [V]
+V_alim = 8.4;   % 8.4 V bateria (max 9V); 5V si USB
 \end{lstlisting}
 \end{block}
 \end{frame}
@@ -421,7 +427,7 @@ Haga captura de pantalla de cada ensayo.
 \begin{columns}[T]
   \column{0.5\textwidth}
   \begin{block}{Ganancia $K$}
-    \[ K = \frac{\omega_\infty}{V_{eq}} = \frac{\omega_\infty}{u \cdot 12/255} \]
+    \[ K = \frac{\omega_\infty}{V_{eq}} = \frac{\omega_\infty}{u \cdot V_{alim}/255} \]
   \end{block}
   \vspace{4pt}
   \begin{block}{Constante de tiempo $\tau$}
@@ -432,6 +438,7 @@ Haga captura de pantalla de cada ensayo.
   \begin{tabular}{|l|c|}
     \hline
     \textbf{Magnitud} & \textbf{Valor} \\ \hline
+    $V_{alim}$ [V] & \\
     $u$ [-] & \\ $V_{eq}$ [V] & \\
     $\omega_\infty$ [°/s] & \\
     $K$ [°/s\,/\,V] & \\ $\tau$ [s] & \\ \hline
@@ -449,7 +456,7 @@ Haga captura de pantalla de cada ensayo.
 K = ?;  tau = ?;          % valores identificados
 s = tf('s');
 G = K / (tau*s + 1);
-u0 = 128 * 12/255;        % tension equivalente
+u0 = 128 * V_alim/255;    % tension equivalente
 step(u0*G)
 hold on
 % superponga los datos experimentales del Data Inspector
