@@ -73,7 +73,7 @@ Motor-CC-Control-Lab/
 ├── firmware/
 │   └── arduino/          # Código Arduino: protocolo serie + lectura encoder + PWM
 ├── software/
-│   └── matlab/           # Scripts MATLAB: comunicación, control, identificación
+│   └── matlab/           # Modelo Simulink MotorCC_V3.slx (Instrument Control Toolbox)
 ├── hardware/
 │   ├── 3d-printing/      # Archivos STL para imprimir las piezas
 │   └── pcb/              # Esquemáticos y layout de la placa de circuito impreso
@@ -90,7 +90,7 @@ Motor-CC-Control-Lab/
 
 ### Requisitos
 
-- **Hardware:** Ver lista de componentes en [`docs/bill_of_materials.md`](docs/bill_of_materials.md)
+- **Hardware:** Ver tabla de componentes más arriba en este README
 - **Software:** MATLAB R2020b o superior, Arduino IDE 2.x
 - **Librerías Arduino:** `SPI.h` (incluida en el IDE)
 
@@ -103,7 +103,7 @@ Motor-CC-Control-Lab/
 2. Imprime las piezas 3D → [`hardware/3d-printing/`](hardware/3d-printing/)
 3. Fabrica o monta la placa → [`hardware/pcb/`](hardware/pcb/)
 4. Carga el firmware en Arduino → [`firmware/arduino/`](firmware/arduino/)
-5. Ejecuta el script de MATLAB → [`software/matlab/`](software/matlab/)
+5. Abre `MotorCC_V3.slx` en Simulink → [`software/matlab/`](software/matlab/), haz doble clic en el bloque `Motor_CC`, selecciona el puerto serie del Arduino y pulsa Run
 6. Realiza las prácticas → [`labs/`](labs/)
 
 ### Licencia
@@ -157,7 +157,7 @@ The rig stands out in four key areas:
 2. Print the 3D parts → [`hardware/3d-printing/`](hardware/3d-printing/)
 3. Build or assemble the PCB → [`hardware/pcb/`](hardware/pcb/)
 4. Upload the firmware to Arduino → [`firmware/arduino/`](firmware/arduino/)
-5. Run the MATLAB script → [`software/matlab/`](software/matlab/)
+5. Open `MotorCC_V3.slx` in Simulink → [`software/matlab/`](software/matlab/), double-click the `Motor_CC` block, select the Arduino serial port and press Run
 6. Follow the lab sessions → [`labs/`](labs/)
 
 ### License
@@ -178,7 +178,7 @@ University of Seville — Contact: [ialvarado@us.es](mailto:ialvarado@us.es)
 ### ✅ Completado (nov 2026)
 
 - Firmware Arduino (`firmware/arduino/main/main.ino`): Ts = 10 ms (100 Hz), protocolo serie binario, observador de Luenberger (desactivado, listo para activar).
-- Modelo Simulink (`software/matlab/MotorCC_V2.slx`): detección automática de puerto serie, bloque único para cerrar el lazo.
+- Modelo Simulink (`software/matlab/MotorCC_V3.slx`): detección automática de puerto serie, bloque único para cerrar el lazo.
 - Guía de prácticas **Lab 01** (`labs/lab01/lab01_isa.tex/.pdf`): descripción del equipo, lectura del encoder, medida de velocidad, identificación por escalón.
 - Guía de prácticas **Lab 02** (`labs/lab02/lab02_isa.tex/.pdf`): zona muerta, control de velocidad (P → PI), control de posición (PD → PID).
 - Todo el repositorio renombrado de GEPOC → **ISA**.
