@@ -46,21 +46,6 @@
 %     Custom headline (igual que referencia)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makeatletter
-\let\oldsection\section
-\renewcommand{\section}[1]{\oldsection{#1}\label{sec:\thesection}}
-\let\oldsubsection\subsection
-\renewcommand{\subsection}[1]{\oldsubsection{#1}\label{sec:\thesection.\thesubsection}}
-\newcounter{calculator}
-\newcounter{calcmaxsec}
-\newcounter{calcmaxsubsec}
-\newcommand{\calcsubsection}[1]{%
-  \setcounter{calculator}{\thesubsection}\addtocounter{calculator}{#1}%
-  \@ifundefined{r@sec:\thesection.\thecalculator}{}%
-    {\color{fg!40!bg}\nameref{sec:\thesection.\thecalculator}}}
-\newcommand{\calcsection}[1]{%
-  \setcounter{calculator}{\thesection}\addtocounter{calculator}{#1}%
-  \@ifundefined{r@sec:\thesection}{}%
-    {\color{fg!40!bg}\nameref{sec:\thecalculator}}}
 \setbeamertemplate{headline}{%
   \leavevmode%
   \@tempdimb=1.25ex%
@@ -73,30 +58,10 @@
     \advance\@tempdimb by 1.125ex%
     \begin{beamercolorbox}[wd=.5\paperwidth,ht=\@tempdimb,right,rightskip=1em]%
         {section in head/foot}%
-      \vbox to \@tempdimb{%
-        \setcounter{calcmaxsec}{\thesection}\addtocounter{calcmaxsec}{-\beamer@sectionmax}%
-        \ifnum\thecalcmaxsec>-1\vfill{\calcsection{-3}}\fi%
-        \ifnum\thecalcmaxsec>-2\vfill{\calcsection{-2}}\fi%
-        \ifnum\thesection>1\vfill{\calcsection{-1}}\fi%
-        \ifnum\thesection>0\vfill\insertsectionhead\fi%
-        \ifnum\thecalcmaxsec<0\vfill{\calcsection{1}}\fi%
-        \ifnum\thecalcmaxsec<-1\vfill{\calcsection{2}}\fi%
-        \ifnum\thesection<2\vfill{\calcsection{3}}\fi%
-        \ifnum\thesection<1\vfill{\calcsection{4}}\fi%
-        \vfill}%
+      \vbox to \@tempdimb{\vfill\insertsectionhead\vfill}%
     \end{beamercolorbox}%
     \begin{beamercolorbox}[wd=.5\paperwidth,ht=\@tempdimb]{subsection in head/foot}%
-      \vbox to \@tempdimb{%
-        \setcounter{calcmaxsubsec}{\thesubsection}\addtocounter{calcmaxsubsec}{-\beamer@subsectionmax}%
-        \ifnum\thecalcmaxsubsec>-1\vfill{\calcsubsection{-3}}\fi%
-        \ifnum\thecalcmaxsubsec>-2\vfill{\calcsubsection{-2}}\fi%
-        \ifnum\thesubsection>1\vfill{\calcsubsection{-1}}\fi%
-        \ifnum\thesubsection>0\vfill\insertsubsectionhead\fi%
-        \ifnum\beamer@subsectionmax>1{\ifnum\thecalcmaxsubsec<0\vfill{\calcsubsection{1}}\fi}\fi%
-        \ifnum\beamer@subsectionmax>2{\ifnum\thecalcmaxsubsec<-1\vfill{\calcsubsection{2}}\fi}\fi%
-        \ifnum\beamer@subsectionmax>3{\ifnum\thesubsection<2\vfill{\calcsubsection{3}}\fi}\fi%
-        \ifnum\beamer@subsectionmax>4{\ifnum\thesubsection<1\vfill{\calcsubsection{4}}\fi}\fi%
-        \vfill}%
+      \vbox to \@tempdimb{\vfill\insertsubsectionhead\vfill}%
     \end{beamercolorbox}%
   \fi%
 }
