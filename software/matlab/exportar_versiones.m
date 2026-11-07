@@ -6,7 +6,7 @@
 %   cd('<ruta>/Motor-CC-Control-Lab/software/matlab')
 %   run('exportar_versiones.m')
 
-modelo    = 'MotorCC_V3';
+modelo    = 'MotorCC_V3_R2025b';
 carpeta   = fileparts(mfilename('fullpath'));   % carpeta del script
 
 versiones = { ...
