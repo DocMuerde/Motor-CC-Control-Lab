@@ -189,26 +189,59 @@ La señal de control equivalente en tensión es:
 \end{equation}
 
 % ============================================================
-\section{El modelo de Simulink \texttt{MotorCC\_V2}}
+\section{Puesta en marcha del equipo}
 % ============================================================
 
-Toda la comunicación serie está encapsulada en el bloque \textbf{Motor\_CC}
-dentro del modelo \texttt{MotorCC\_V2.slx}. Los estudiantes \emph{no necesitan}
-configurar bloques serie manualmente.
+Toda la comunicación serie con el Arduino está encapsulada en el bloque
+\textbf{Motor\_CC} del modelo \texttt{MotorCC\_V3.slx}. No es necesario
+configurar ningún bloque serie manualmente; basta con seleccionar el puerto
+al abrir el modelo.
 
-\subsection{Apertura y configuración del puerto}
+\subsection{Pasos de puesta en marcha}
 
-\begin{enumerate}[noitemsep]
-  \item Conecte el cable USB entre el Arduino y el PC.
-  \item Abra MATLAB y navegue hasta la carpeta del proyecto
-        (\texttt{software/matlab/}).
-  \item Abra el modelo: \texttt{open('MotorCC\_V2.slx')}.
-  \item \textbf{Haga doble clic} sobre el bloque \textbf{Motor\_CC}. El diálogo
-        escaneará automáticamente los puertos serie disponibles y los mostrará
-        en el desplegable \emph{Puerto serie}. Seleccione el puerto del Arduino
-        (p.~ej., \texttt{COM3} en Windows o \texttt{/dev/tty.usbmodem…} en
-        macOS/Linux) y pulse \emph{OK}.
+\begin{enumerate}
+  \item \textbf{Conecte el Arduino al PC} mediante el cable USB.
+
+  \item \textbf{Abra la carpeta del proyecto en MATLAB.}
+        En el panel \emph{Current Folder} de MATLAB, navegue hasta el
+        directorio \texttt{software/matlab/} del repositorio.
+
+  \item \textbf{Abra el modelo.}
+        Haga doble clic en \texttt{MotorCC\_V3.slx} en el explorador de
+        archivos de MATLAB, o escriba en la consola:
+        \begin{lstlisting}[numbers=none]
+open('MotorCC_V3.slx')
+        \end{lstlisting}
+
+  \item \textbf{Seleccione el puerto serie.}
+        Haga \textbf{doble clic} sobre el bloque \textbf{Motor\_CC} en el
+        diagrama de Simulink. Se abrirá el diálogo de parámetros; el
+        desplegable \emph{Puerto serie} mostrará automáticamente los puertos
+        disponibles en el PC. Seleccione el que corresponde al Arduino
+        (p.~ej., \texttt{COM3} en Windows, \texttt{/dev/tty.usbmodem\ldots}
+        en macOS o \texttt{/dev/ttyACM0} en Linux) y pulse \emph{OK}.
+
+  \item \textbf{Pulse \emph{Run}.}
+        Haga clic en el botón \textbf{Run} (\raisebox{-1pt}{\(\triangleright\)})
+        de la barra de herramientas de Simulink. El modelo se ejecuta en
+        \emph{tiempo real}, sincronizado con el Arduino a 100~Hz.
+
+  \item \textbf{Verifique el funcionamiento.}
+        El Scope debe mostrar señales de ángulo~$\theta$ y velocidad~$\omega$
+        que varían en tiempo real. Si el motor no gira o el Scope no actualiza,
+        compruebe:
+        \begin{itemize}[noitemsep]
+          \item que el Arduino está encendido (LED de alimentación visible),
+          \item que ha seleccionado el puerto correcto en el bloque Motor\_CC,
+          \item que la alimentación del motor~(12~V) está conectada.
+        \end{itemize}
 \end{enumerate}
+
+\begin{notabox}
+  Una vez seleccionado el puerto, el modelo lo recuerda hasta la próxima vez
+  que se abra. Solo hay que volver al diálogo del bloque si se cambia de
+  ordenador o de puerto USB.
+\end{notabox}
 
 \subsection{Entradas y salidas del bloque Motor\_CC}
 
