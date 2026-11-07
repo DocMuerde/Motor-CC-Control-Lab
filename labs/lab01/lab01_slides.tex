@@ -1,6 +1,6 @@
 % ============================================================
-%  Práctica 1 — Identificación del Motor CC
-%  Dpto. Ingeniería de Sistemas y Automática — Univ. de Sevilla
+%  Práctica 1 --- Identificación del Motor CC
+%  Dpto. Ingeniería de Sistemas y Automática --- Univ. de Sevilla
 %  Estilo: Beamer Shadow (basado en Presentacion_arduino_V2.tex)
 % ============================================================
 \documentclass{beamer}
@@ -33,9 +33,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title[Universidad de Sevilla\hspace{18mm}\insertframenumber/\inserttotalframenumber]{%
-  Práctica 1 — Identificación del Motor CC}
+  Práctica 1 --- Identificación del Motor CC}
 \institute{Dpto.\ de Ingeniería de Sistemas y Automática \\
-           Escuela Superior de Ingenieros — Universidad de Sevilla}
+           Escuela Superior de Ingenieros --- Universidad de Sevilla}
 \date{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -210,7 +210,7 @@ Arduino $\to$ Simulink & $\omega$ [°/s] & Velocidad angular \\
   \column{0.48\textwidth}
   \begin{block}{Simulación clásica}
     \begin{itemize}
-      \item Tiempo determinado (inicial–final).
+      \item Tiempo determinado (inicial--final).
       \item Entradas predefinidas.
       \item Análisis \emph{a posteriori}.
     \end{itemize}
@@ -250,16 +250,16 @@ Para trabajar en modo \emph{tiempo real interactivo}:
 
 \subsection{Controles de entrada}
 
-\begin{frame}{Controles de entrada — Dashboard}
+\begin{frame}{Controles de entrada --- Dashboard}
 Los bloques \texttt{Simulink / Dashboard} permiten modificar parámetros
 de cualquier bloque \emph{sin detener la simulación}:
 \begin{columns}[T]
   \column{0.45\textwidth}
   \textbf{Controles disponibles:}
   \begin{itemize}
-    \item \textbf{Knob} — dial giratorio.
-    \item \textbf{Edit} — campo de texto numérico.
-    \item \textbf{Slider} — deslizador.
+    \item \textbf{Knob} --- dial giratorio.
+    \item \textbf{Edit} --- campo de texto numérico.
+    \item \textbf{Slider} --- deslizador.
   \end{itemize}
   \vspace{4pt}
   \textbf{Cómo conectar:}
@@ -355,7 +355,7 @@ Con el modelo en marcha:
 
 \subsection{Ejercicio previo}
 
-\begin{frame}{Ejercicio 1 — Preguntas y script de inicialización}
+\begin{frame}{Ejercicio 1 --- Preguntas y script de inicialización}
 \begin{block}{Preguntas teóricas}
   \begin{enumerate}
     \item ¿Cuál es la \textbf{entrada} del sistema motor CC?
@@ -366,7 +366,7 @@ Con el modelo en marcha:
 \vspace{4pt}
 \begin{block}{Script \texttt{init\_motor.m}}
   \begin{lstlisting}
-% init_motor.m — Parámetros del equipo ISA Motor CC
+% init_motor.m --- Parámetros del equipo ISA Motor CC
 u_max  = 255;   % Valor máximo de la señal de control
 u_min  = -255;  % Valor mínimo de la señal de control
 Ts     = 0.01;  % Periodo de muestreo [s]
@@ -375,9 +375,9 @@ V_alim = 12;    % Tensión de alimentación [V]
 \end{block}
 \end{frame}
 
-\subsection{Experimento 1 — Saturación}
+\subsection{Experimento 1 --- Saturación}
 
-\begin{frame}{Experimento 1 — Efecto de la saturación en $u$}
+\begin{frame}{Experimento 1 --- Efecto de la saturación en $u$}
 \begin{block}{Procedimiento}
   Cambie $u$ progresivamente a través de los valores:
   \[ u \in \{-300,\;-255,\;-128,\;0,\;128,\;255,\;300\} \]
@@ -391,7 +391,7 @@ Grafique $u$ y $\omega$ en un Scope con dos paneles y haga captura de pantalla.
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Experimento 1 — Gráfica y tabla}
+\begin{frame}{Experimento 1 --- Gráfica y tabla}
 \begin{center}
   \textit{[Pegue aquí la captura del Scope]}\\[2ex]
   \begin{tabular}{|c|c|}
@@ -402,9 +402,9 @@ Grafique $u$ y $\omega$ en un Scope con dos paneles y haga captura de pantalla.
 \end{center}
 \end{frame}
 
-\subsection{Experimento 2 — Característica estática}
+\subsection{Experimento 2 --- Característica estática}
 
-\begin{frame}{Experimento 2 — Característica estática}
+\begin{frame}{Experimento 2 --- Característica estática}
 \begin{block}{Procedimiento}
   Mida $\omega_\infty$ en régimen permanente para:
   \[ u \in \{-255,\;-200,\;-128,\;-64,\;0,\;64,\;128,\;200,\;255\} \]
@@ -421,7 +421,7 @@ grid on;  title('Característica estática del motor CC')
 \end{block}
 \end{frame}
 
-\begin{frame}{Experimento 2 — Gráfica y preguntas}
+\begin{frame}{Experimento 2 --- Gráfica y preguntas}
 \begin{center}
   \textit{[Pegue aquí la gráfica de la característica estática]}
 \end{center}
@@ -435,9 +435,9 @@ grid on;  title('Característica estática del motor CC')
 \end{block}
 \end{frame}
 
-\subsection{Experimento 3 — Ensayo en escalón}
+\subsection{Experimento 3 --- Ensayo en escalón}
 
-\begin{frame}{Experimento 3 — Ensayo en escalón}
+\begin{frame}{Experimento 3 --- Ensayo en escalón}
 \begin{block}{Procedimiento}
   \begin{enumerate}
     \item Parta de $u = 0$ con el motor parado.
@@ -450,7 +450,7 @@ Grafique $u$ (panel superior) y $\omega$ (panel inferior).
 Haga captura de pantalla de cada ensayo.
 \end{frame}
 
-\begin{frame}{Experimento 3 — Identificación de $K$ y $\tau$}
+\begin{frame}{Experimento 3 --- Identificación de $K$ y $\tau$}
 \begin{columns}[T]
   \column{0.5\textwidth}
   \begin{block}{Ganancia $K$}
@@ -472,9 +472,9 @@ Haga captura de pantalla de cada ensayo.
 \end{columns}
 \end{frame}
 
-\begin{frame}{Experimento 3 — Gráfica y validación}
+\begin{frame}{Experimento 3 --- Gráfica y validación}
 \begin{center}
-  \textit{[Pegue aquí la captura del Scope — respuesta al escalón]}
+  \textit{[Pegue aquí la captura del Scope --- respuesta al escalón]}
 \end{center}
 \vspace{4pt}
 \begin{block}{Validación con MATLAB}
@@ -490,13 +490,13 @@ hold on
 \end{block}
 \end{frame}
 
-\subsection{Experimento 4 — Barrido frecuencial}
+\subsection{Experimento 4 --- Barrido frecuencial}
 
-\begin{frame}{Experimento 4 — Barrido de frecuencia (opcional)}
+\begin{frame}{Experimento 4 --- Barrido de frecuencia (opcional)}
 \begin{block}{Procedimiento}
   \begin{enumerate}
     \item Conecte $u$ a una señal senoidal: amplitud $A = 100$, bias $= 0$.
-    \item Comience con $f = 0{,}1$\,Hz y aumente: 0,2 — 0,5 — 1 — 2 — 5\,Hz.
+    \item Comience con $f = 0{,}1$\,Hz y aumente: 0,2 --- 0,5 --- 1 --- 2 --- 5\,Hz.
     \item Observe en el Scope la amplitud de $\omega$ en cada frecuencia.
   \end{enumerate}
 \end{block}
