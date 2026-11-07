@@ -333,11 +333,11 @@ Con el modelo en marcha:
 \vspace{4pt}
 \begin{block}{Script \texttt{init\_motor.m}}
   \begin{lstlisting}
-% init_motor.m --- Parámetros del equipo ISA Motor CC
-u_max  = 255;   % Valor máximo de la señal de control
-u_min  = -255;  % Valor mínimo de la señal de control
+% init_motor.m --- Parametros del equipo ISA Motor CC
+u_max  = 255;   % Valor maximo de la senal de control
+u_min  = -255;  % Valor minimo de la senal de control
 Ts     = 0.01;  % Periodo de muestreo [s]
-V_alim = 12;    % Tensión de alimentación [V]
+V_alim = 12;    % Tension de alimentacion [V]
 \end{lstlisting}
 \end{block}
 \end{frame}
@@ -381,9 +381,9 @@ Grafique $u$ y $\omega$ en un Scope con dos paneles y haga captura de pantalla.
 u_vec = [-255,-200,-128,-64, 0, 64,128,200,255];
 w_vec = [   ?,   ?,   ?,  ?, ?,  ?,  ?,  ?,  ?]; % rellenar
 plot(u_vec, w_vec, 'o-', 'LineWidth', 1.5)
-xlabel('Señal de control u  [-]')
-ylabel('\omega_\infty  [°/s]')
-grid on;  title('Característica estática del motor CC')
+xlabel('Senal de control u  [-]')
+ylabel('\omega_\infty  [deg/s]')
+grid on;  title('Caracteristica estatica del motor CC')
 \end{lstlisting}
 \end{block}
 \end{frame}
@@ -449,7 +449,7 @@ Haga captura de pantalla de cada ensayo.
 K = ?;  tau = ?;          % valores identificados
 s = tf('s');
 G = K / (tau*s + 1);
-u0 = 128 * 12/255;        % tensión equivalente
+u0 = 128 * 12/255;        % tension equivalente
 step(u0*G)
 hold on
 % superponga los datos experimentales del Data Inspector
