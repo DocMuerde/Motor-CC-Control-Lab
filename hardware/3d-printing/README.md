@@ -53,9 +53,15 @@ Compatible con: **Fusion 360**, FreeCAD, SolidWorks, CATIA, OnShape.
 
 ---
 
+<p align="center">🇬🇧 &nbsp;&nbsp; <strong>E N G L I S H</strong> &nbsp;&nbsp; 🇬🇧</p>
+
+---
+
 ## English
 
 ### Parts overview
+
+The rig combines parts made from **PLA (3D-printed)**, **metal (CNC-machined)**, and standard commercial elements.
 
 | STL file | Part | Material | Manufacturing |
 |----------|------|----------|---------------|
@@ -66,17 +72,38 @@ Compatible con: **Fusion 360**, FreeCAD, SolidWorks, CATIA, OnShape.
 | `SMotor.stl` | Motor bracket | PLA | 3D printed |
 | `SSensor_integrado.stl` | Encoder bracket | PLA | 3D printed |
 | `Disco_inercia.stl` | Inertia disk ⚠️ | **Aluminium** | **CNC machined** (or outsourced) |
-| `Adaptador.stl` | Disk-to-shaft adapter ⚠️ | **Metal** | **Commercial part** |
+| `Adaptador.stl` | Disk-to-shaft adapter ⚠️ | **Metal** | **Commercial part** (with set screws) |
 
-> ⚠️ The inertia disk and adapter are **not 3D-printed**. STL files are provided as geometric reference only.
+> ⚠️ **The inertia disk and adapter are not 3D-printed parts.** STL files are included as geometric reference only.  
+> The disk was CNC-machined from the model; it can also be ordered from an external machining service (e.g. PCBWay, Xometry, local workshops).  
+> The adapter is a standard commercial shaft coupling.
 
 ### 3D print settings (PLA parts)
 
 | Parameter | Value |
 |-----------|-------|
 | Material | PLA |
-| Infill (structural) | **100%** — base, brackets |
-| Infill (enclosure) | 20–40% — box, lid |
+| Infill (structural parts) | **100%** — base, brackets |
+| Infill (enclosures) | 20–40% — box, lid |
 | Layer height | 0.2 mm |
 | Perimeters | 3 |
 | Supports | Only for overhangs > 45° |
+| Recommended slicer | PrusaSlicer / Cura |
+
+### Bill of Materials — Fasteners and joining elements
+
+> 📝 **To be completed** — add reference, quantity and location for each fastener.
+
+| Reference | Description | Quantity | Location |
+|-----------|-------------|----------|----------|
+| M? × ?mm | — | — | — |
+
+### CAD files
+
+The complete assembly in STEP format is available in the `step/` folder:
+
+| File | Description |
+|------|-------------|
+| `Eq_practicas v83 v7.step` | Complete assembly (all parts) |
+
+Compatible with: **Fusion 360**, FreeCAD, SolidWorks, CATIA, OnShape.

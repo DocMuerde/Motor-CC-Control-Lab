@@ -51,14 +51,55 @@ https://ams-osram.com/products/sensors/position-sensors/ams-as5047p-high-resolut
 
 ---
 
+<p align="center">🇬🇧 &nbsp;&nbsp; <strong>E N G L I S H</strong> &nbsp;&nbsp; 🇬🇧</p>
+
+---
+
 ## English
 
 High-resolution magnetic rotary position encoder used in the lab rig.  
 Mounted on the **load side** (gearbox output shaft + inertia disk).
 
+### Files
+
+| File | Description |
+|------|-------------|
+| `AS5047P-Datasheet.pdf` | Full AS5047P datasheet (ams-OSRAM) |
+| `AS5047P.png` | Photo of the component in the rig |
+
 ### Key parameters
 
-- Resolution: 14-bit → **16 384 steps/rev**
-- Interface: SPI (modes 1 & 3), ABI, PWM, UVW
-- Supply voltage: 3.3 V
-- CS pin on Arduino: **D4**
+| Parameter | Value |
+|-----------|-------|
+| Resolution | 14 bits → **16 384 steps/rev** |
+| Communication interface | SPI (modes 1 & 3), ABI, PWM, UVW |
+| Supply voltage | 3.3 V |
+| Operating temperature | −40 °C to +150 °C |
+| Maximum SPI frequency | 10 MHz |
+
+### Arduino UNO connections
+
+| AS5047P pin | Arduino pin | Function |
+|-------------|-------------|---------|
+| CLK | D13 (SCK) | SPI clock |
+| DO | D12 (MISO) | Data from encoder to Arduino |
+| DI | D11 (MOSI) | Data from Arduino to encoder |
+| CSn | **D4** | Chip Select (active low) |
+| GND | GND | Ground reference |
+| VDD | 3.3 V | Power supply |
+
+> ⚠️ The AS5047P operates at **3.3 V**. Do not connect directly to the Arduino's 5 V outputs without a voltage divider or level-shifter on the chip's input lines.
+
+### Arduino library
+
+```
+Library: "AS5047P" by Adrien Plazas  
+Repository: https://github.com/adplaz/AS5047P
+```
+
+Installation from Arduino IDE: *Sketch → Include Library → Manage Libraries → search "AS5047P"*
+
+### Reference
+
+📄 Official manufacturer page:  
+https://ams-osram.com/products/sensors/position-sensors/ams-as5047p-high-resolution-rotary-position-sensor

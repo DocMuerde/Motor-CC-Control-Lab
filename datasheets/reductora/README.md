@@ -32,9 +32,37 @@ Va acoplada directamente al motor A-max 22 (Art. 110120). El piñón del motor a
 
 ---
 
+<p align="center">🇬🇧 &nbsp;&nbsp; <strong>E N G L I S H</strong> &nbsp;&nbsp; 🇬🇧</p>
+
+---
+
 ## English
 
-Precision planetary gearbox from maxon's GP 22 B line.  
-Factory-fitted to the A-max 22 motor (Art. 110120). Used in the lab rig together with an inertia disk on the output shaft.
+Precision planetary gearbox from maxon's GP 22 B series.  
+Factory-fitted to the A-max 22 motor (Art. 110120). The motor's pinion serves as the input gear of the first stage.  
+Used in the lab rig together with an inertia disk on the output shaft.
 
-Product page: https://www.maxongroup.es/maxon/view/product/110356
+### Files
+
+| File | Description |
+|------|-------------|
+| `GP22B-110356-Datasheet.pdf` | Gearbox catalogue page (reduction ratio, maximum torque, dimensions) |
+| `GP22B-110356-CAD.zip` | 3D CAD model in STEP format (also covers articles 110355, 110357–110359) |
+
+### Main parameters (Art. 110356)
+
+| Parameter | Value |
+|-----------|-------|
+| Series | GP 22 B Ø22 mm |
+| Maximum continuous output torque | 0.1 – 0.3 Nm |
+| Bearing type | Sintered |
+| Mounting | Factory-fitted to motor |
+| Article number | **110356** |
+| Status | NRND (Not Recommended for New Designs) |
+
+> ℹ️ GP 22 B gearboxes are only sold as part of a motor + gearbox combination, not separately.
+
+### References
+
+- 🌐 Product page: https://www.maxongroup.es/maxon/view/product/110356
+- 🌐 Maxon catalogue: https://www.maxongroup.es

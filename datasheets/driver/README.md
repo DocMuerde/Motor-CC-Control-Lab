@@ -47,7 +47,52 @@ Basado en el chip **Toshiba TB6612FNG**.
 
 ---
 
+<p align="center">🇬🇧 &nbsp;&nbsp; <strong>E N G L I S H</strong> &nbsp;&nbsp; 🇬🇧</p>
+
+---
+
 ## English
 
-SparkFun breakout board for the Toshiba **TB6612FNG** dual-channel DC motor driver.  
-Continuous current 1.2 A per channel, 3.2 A peak. PWM frequency up to 100 kHz (firmware uses 31.25 kHz via Timer1 prescaler=1 to eliminate audible noise).
+SparkFun breakout board for the **Toshiba TB6612FNG** dual-channel DC motor driver.
+
+### Files
+
+| File | Description |
+|------|-------------|
+| `TB6612FNG-Datasheet-Toshiba.pdf` | TB6612FNG chip datasheet (Toshiba) |
+| `SparkFun_Motor_Driver-TB6612FNG_v11c.pdf` | SparkFun board schematic (PDF) |
+| `SparkFun_Motor_Driver-TB6612FNG_v11c/` | Eagle design files (.brd + .sch) |
+
+### SparkFun ROB-14451 specifications
+
+| Parameter | Value |
+|-----------|-------|
+| Motor supply voltage (VM) | 2.5 – 13.5 V |
+| Continuous current per channel | **1.2 A** |
+| Peak current per channel | **3.2 A** (up to 2 s) |
+| Logic supply voltage (VCC) | 2.7 – 5.5 V |
+| Maximum PWM frequency | 100 kHz |
+| Motor channels | 2 (only channel A used in the rig) |
+| Dimensions | 20.3 × 15.2 mm |
+
+### Arduino UNO connections
+
+| SparkFun pin | Arduino pin | Function |
+|--------------|-------------|---------|
+| PWMA | D9 (Timer1) | Channel A speed control — PWM 31.25 kHz |
+| AIN1 | D7 | Channel A direction (bit 1) |
+| AIN2 | D8 | Channel A direction (bit 2) |
+| STBY | D6 | Standby (HIGH = active) |
+| VM | 12–24 V | Motor power supply |
+| VCC | 5 V | Logic power supply |
+| GND | GND | Ground reference |
+| AO1, AO2 | Motor+ / Motor− | Motor output |
+
+> The **STBY** pin must be held HIGH for the driver to be active. If left floating or pulled LOW, the motor will not respond.
+
+The firmware sets Timer1's prescaler to 1, raising the PWM frequency on pins 9 and 10 to **31 250 Hz**, well above the audible range, to eliminate motor coil whine.
+
+### References
+
+- 📄 SparkFun product page: https://www.sparkfun.com/products/14451
+- 📄 GitHub repository (Eagle + Gerbers): https://github.com/sparkfun/SparkFun_Motor_Driver_TB6612FNG
