@@ -138,7 +138,7 @@ El conjunto motor+reductora se modela como un sistema de \textbf{primer orden}:
   $u\in[-255,\;255]$; $V_{alim}$ depende del modo:
   \begin{itemize}
     \setlength{\itemsep}{2pt}\setlength{\topsep}{2pt}
-    \item \textbf{Batería:} $V_{alim}\approx8{,}4\,\text{V}$
+    \item \textbf{Fuente 8{,}4\,V:} $V_{alim}=8{,}4\,\text{V}$ (cargador LiPo 2S)
           ($V_{max}=9\,\text{V}$)
     \item \textbf{USB:} $V_{alim}=5\,\text{V}$
           (rango dinámico reducido)
@@ -344,7 +344,7 @@ Con el modelo en marcha:
 u_max  = 255;   % Valor maximo de la senal de control
 u_min  = -255;  % Valor minimo de la senal de control
 Ts     = 0.01;  % Periodo de muestreo [s]
-V_alim = 8.4;   % 8.4 V bateria (max 9V); 5V si USB
+V_alim = 8.4;   % fuente 8.4 V (cargador LiPo 2S); 5V si USB
 \end{lstlisting}
 \end{block}
 \end{frame}

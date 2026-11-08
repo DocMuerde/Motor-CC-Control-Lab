@@ -65,7 +65,7 @@ El equipo destaca en cuatro aspectos clave:
 | 12 | Tornillos M3×12 | Fijación de la bancada a la base y del motor al soporte *(los mismos valdrán con insertos metálicos)* |
 | 4 | Tornillos M2×10 | Fijación del encoder y tapa |
 | 1 | Cable JST (encoder ↔ shield) | Incluido con la shield o fabricado a medida |
-| *(opcional)* | Batería 9 V con conector de barril | Alimentación externa (máx. 9 V, recomendado 8,4 V) |
+| 1 | Fuente de alimentación 8,4 V con conector de barril | Cargador de LiPo 2S usado como fuente; conector de barril 5,5/2,1 mm |
 
 > Los tornillos M3 e M2, las patas de goma y los cables JST son los únicos consumibles que hay que tener a mano antes de empezar el montaje.
 
@@ -75,7 +75,7 @@ El montaje del equipo es sencillo y no requiere herramientas especiales:
 2. **Monta la bancada** — fija el motor a su soporte y atornilla el soporte a la base.
 3. **Coloca el encoder** — el AS5047P se monta en el extremo del eje de salida de la reductora. Ajusta el entrehierro al valor indicado en el datasheet (~0,5–3 mm).
 4. **Ensambla la electrónica** — apila la shield ISA sobre el Arduino y conecta los cables del motor (2 hilos de potencia) y del encoder (conector JST en la shield).
-5. **Conecta a PC** — cable USB Arduino → PC. No se necesita alimentación externa para funcionar vía USB (rango dinámico reducido); para alimentación de batería conecta el conector de barril.
+5. **Conecta a PC** — cable USB Arduino → PC. No se necesita alimentación externa para funcionar vía USB (rango dinámico reducido); para alimentación completa conecta la fuente de 8,4 V al conector de barril.
 
 ### Futuras mejoras
 
@@ -193,7 +193,7 @@ The rig stands out in four key areas:
 | 12 | M3×12 screws | Mounting bench to base and motor to bracket *(same screws will be reused with heat-set inserts)* |
 | 4 | M2×10 screws | Encoder and cap fastening |
 | 1 | JST cable (encoder ↔ shield) | Supplied with the shield or custom-made |
-| *(optional)* | 9 V battery with barrel jack | External power (max 9 V, recommended 8.4 V) |
+| 1 | 8.4 V power supply with barrel jack | 2S LiPo charger used as power supply; 5.5/2.1 mm barrel connector |
 
 > M3/M2 screws, rubber feet and JST cables are the only consumables you need to have on hand before assembly.
 
@@ -203,7 +203,7 @@ Assembly is straightforward and requires no special tools:
 2. **Mount the bench** — attach the motor to its bracket and screw the bracket to the base plate.
 3. **Install the encoder** — the AS5047P mounts at the gearbox output shaft end. Set the air gap to the value in the datasheet (~0.5–3 mm).
 4. **Assemble the electronics** — stack the ISA shield on the Arduino and connect the motor cables (2 power wires) and encoder (JST connector on the shield).
-5. **Connect to PC** — USB cable Arduino → PC. USB power alone is enough (reduced dynamic range); for battery power connect the barrel jack.
+5. **Connect to PC** — USB cable Arduino → PC. USB power alone is enough (reduced dynamic range); for full power connect the 8.4 V supply to the barrel jack.
 
 ### Future Improvements
 
