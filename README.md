@@ -49,6 +49,22 @@ El equipo destaca en cuatro aspectos clave:
        width="820">
 </p>
 
+### Montaje
+
+El montaje del equipo es sencillo y no requiere herramientas especiales:
+
+1. **Imprime las piezas 3D** — encontrarás los archivos STL en [`hardware/3d-printing/`](hardware/3d-printing/). Se recomienda PLA a un 20–30 % de relleno.
+2. **Monta la bancada** — fija el motor a su soporte y atornilla el soporte a la base.
+3. **Coloca el encoder** — el AS5047P se monta en el extremo del eje de salida de la reductora. Ajusta el entrehierro al valor indicado en el datasheet (~0,5–3 mm).
+4. **Ensambla la electrónica** — apila la shield ISA sobre el Arduino y conecta los cables del motor (2 hilos de potencia) y del encoder (conector JST en la shield).
+5. **Conecta a PC** — cable USB Arduino → PC. No se necesita alimentación externa para funcionar vía USB (rango dinámico reducido); para alimentación de batería conecta el conector de barril.
+
+### Futuras mejoras
+
+- 🔩 **Insertos metálicos roscados** — los orificios de tornillo actuales son directamente en PLA. Instalar insertos de latón (tipo M3 de calor) mejoraría notablemente la durabilidad del montaje y el apriete, y se pueden colocar en un plis-plas con un soldador.
+- 📎 **Guías de cables en la base** — añadir unas pequeñas piezas de plástico (clips o canales) en la parte inferior de la base para fijar y ordenar los cables que van del motor al driver, evitando que queden sueltos y que puedan engancharse o deteriorarse.
+
+
 ### Estructura del repositorio
 
 ```
@@ -142,6 +158,22 @@ The rig stands out in four key areas:
 4. Upload the firmware to Arduino → [`firmware/arduino/`](firmware/arduino/)
 5. Open `MotorCC_V3.slx` in Simulink → [`software/matlab/`](software/matlab/), double-click the `Motor_CC` block, select the Arduino serial port and press Run
 6. Follow the lab sessions → [`labs/`](labs/)
+
+### Assembly
+
+Assembly is straightforward and requires no special tools:
+
+1. **Print the 3D parts** — STL files are in [`hardware/3d-printing/`](hardware/3d-printing/). Recommended: PLA, 20–30 % infill.
+2. **Mount the bench** — attach the motor to its bracket and screw the bracket to the base plate.
+3. **Install the encoder** — the AS5047P mounts at the gearbox output shaft end. Set the air gap to the value in the datasheet (~0.5–3 mm).
+4. **Assemble the electronics** — stack the ISA shield on the Arduino and connect the motor cables (2 power wires) and encoder (JST connector on the shield).
+5. **Connect to PC** — USB cable Arduino → PC. USB power alone is enough (reduced dynamic range); for battery power connect the barrel jack.
+
+### Future Improvements
+
+- 🔩 **Metal threaded inserts** — current screw holes are tapped directly in PLA. Installing brass heat-set inserts (M3) would greatly improve durability and clamping force, and can be fitted in minutes with a soldering iron.
+- 📎 **Cable management clips on the base** — small plastic clips or channels on the underside of the base to route and secure the cables running from the motor to the driver, preventing them from coming loose or getting damaged.
+
 
 ### License
 
