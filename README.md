@@ -229,17 +229,20 @@ University of Seville — Contact: [ialvarado@us.es](mailto:ialvarado@us.es)
 ### ✅ Completado (nov 2026)
 
 - Firmware Arduino (`firmware/arduino/main/main.ino`): Ts = 10 ms (100 Hz), protocolo serie binario, observador de Luenberger (desactivado, listo para activar).
-- Modelo Simulink (`software/matlab/MotorCC_V3.slx`): detección automática de puerto serie, bloque único para cerrar el lazo.
-- Guía de prácticas **Lab 01** (`labs/lab01/lab01_isa.tex/.pdf`): descripción del equipo, lectura del encoder, medida de velocidad, identificación por escalón.
-- Guía de prácticas **Lab 02** (`labs/lab02/lab02_isa.tex/.pdf`): zona muerta, control de velocidad (P → PI), control de posición (PD → PID).
+- Modelo Simulink (`software/matlab/MotorCC_V3_R2025b.slx`): detección automática de puerto serie, bloque único para cerrar el lazo.
+- Exportación del modelo Simulink a versiones anteriores: `MotorCC_V3_R2025b_R2024b.slx` … `R2020b.slx` generados con `exportar_versiones.m`.
+- Presentación de diapositivas **Lab 01** (`labs/lab01/lab01_slides.tex/.pdf`): descripción del equipo, protocolo, experimentos de identificación.
+- Guía de prácticas **Lab 01** y **Lab 02** (`labs/labXX/labXX_isa.tex/.pdf`).
+- Documentación del README: esquema del sistema (diagrama), sección de montaje con lista de materiales y sección de futuras mejoras.
 - Todo el repositorio renombrado de GEPOC → **ISA**.
 
 ### 🔜 Pendiente
 
-1. **Revisar y ajustar las guías de prácticas con el equipo real** — los parámetros del modelo (K ≈ 3, τ ≈ 0.07 s a 12 V) y los valores de las ganancias de los controladores deben verificarse experimentalmente y ajustarse si es necesario antes de pasárselas a los alumnos.
-2. **Crear los boletines de soluciones** (Lab 01 y Lab 02) — una vez hechos los experimentos reales.
-3. **Exportar el modelo Simulink a versiones anteriores** (`Simulink.exportToVersion`) para compatibilidad con MATLAB R2020b–R2024b por si los alumnos no tienen la última versión.
-4. **Lab 03** (opcional) — práctica avanzada (control en cascada, estimación de estado, etc.) si se quiere ampliar el material.
+1. **Revisar y ajustar las guías de prácticas con el equipo real** — verificar experimentalmente los parámetros del modelo (K, τ) y las ganancias de los controladores antes de pasárselas a los alumnos.
+2. **Crear los boletines de soluciones** (Lab 01 y Lab 02) — una vez realizados los experimentos reales.
+3. **Modificar los diseños 3D para incluir insertos metálicos roscados** — rediseñar los orificios de los tornillos M3 para albergar insertos de latón M3 de calor, mejorando la durabilidad del montaje.
+4. **Añadir guías de cables en la base** — diseñar e imprimir pequeños clips o canales en la parte inferior de la base para ordenar el cableado motor–driver.
+5. **Lab 03** (opcional) — práctica avanzada (control en cascada, estimación de estado, etc.) si se quiere ampliar el material.
 
 ### 💬 Cómo retomar con Claude
 
