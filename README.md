@@ -51,6 +51,24 @@ El equipo destaca en cuatro aspectos clave:
 
 ### Montaje
 
+### Lista de materiales para el montaje
+
+| Cant. | Referencia | Descripción |
+|:---:|---|---|
+| 1 | Maxon A-max 22 (Art. 110120) + GP 22 B (Art. 110356) | Motor CC con reductora (imán de encoder incluido en el kit) |
+| 1 | ams AS5047P | Encoder magnético 14 bits |
+| 1 | Arduino UNO | Microcontrolador |
+| 1 | Shield ISA (PCB a medida) | Placa con driver TB6612FNG e interfaz de encoder |
+| 1 | Cable USB tipo B | Comunicación Arduino–PC |
+| — | Piezas 3D en PLA | Bancada, soporte del motor y tapa del encoder (ver `hardware/3d-printing/`) |
+| 4 | Pata de goma atornillada | Antivibraciones en la base; tamaño según orificio de la base |
+| — | Tornillos M3 | Fijación de la bancada a la base y del motor al soporte |
+| — | Tornillos M2 | Fijación del encoder y tapa |
+| 1 | Cable JST (encoder ↔ shield) | Incluido con la shield o fabricado a medida |
+| *(opcional)* | Batería 9 V con conector de barril | Alimentación externa (máx. 9 V, recomendado 8,4 V) |
+
+> Los tornillos M3 e M2, las patas de goma y los cables JST son los únicos consumibles que hay que tener a mano antes de empezar el montaje.
+
 El montaje del equipo es sencillo y no requiere herramientas especiales:
 
 1. **Imprime las piezas 3D** — encontrarás los archivos STL en [`hardware/3d-printing/`](hardware/3d-printing/). Se recomienda PLA a un 20–30 % de relleno.
@@ -160,6 +178,24 @@ The rig stands out in four key areas:
 6. Follow the lab sessions → [`labs/`](labs/)
 
 ### Assembly
+
+### Bill of Materials
+
+| Qty | Reference | Description |
+|:---:|---|---|
+| 1 | Maxon A-max 22 (Art. 110120) + GP 22 B (Art. 110356) | DC motor with gearbox (encoder magnet included in kit) |
+| 1 | ams AS5047P | 14-bit magnetic encoder |
+| 1 | Arduino UNO | Microcontroller |
+| 1 | ISA Shield (custom PCB) | Board with TB6612FNG driver and encoder interface |
+| 1 | USB Type-B cable | Arduino–PC communication |
+| — | PLA 3D-printed parts | Bench, motor bracket and encoder cap (see `hardware/3d-printing/`) |
+| 4 | Screwed rubber feet | Vibration damping for the base |
+| — | M3 screws | Mounting bench to base and motor to bracket |
+| — | M2 screws | Encoder and cap fastening |
+| 1 | JST cable (encoder ↔ shield) | Supplied with the shield or custom-made |
+| *(optional)* | 9 V battery with barrel jack | External power (max 9 V, recommended 8.4 V) |
+
+> M3/M2 screws, rubber feet and JST cables are the only consumables you need to have on hand before assembly.
 
 Assembly is straightforward and requires no special tools:
 
