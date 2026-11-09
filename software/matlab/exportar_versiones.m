@@ -6,7 +6,8 @@
 %   cd('<ruta>/Motor-CC-Control-Lab/software/matlab')
 %   run('exportar_versiones.m')
 
-modelo    = 'MotorCC_V3_R2025b';
+modelo    = 'MotorCC_V3_R2025b';               % archivo fuente (versión de trabajo)
+base      = 'MotorCC_V3';                      % prefijo para los archivos exportados
 carpeta   = fileparts(mfilename('fullpath'));   % carpeta del script
 
 versiones = { ...
@@ -24,8 +25,8 @@ load_system(fullfile(carpeta, [modelo '.slx']));
 
 for k = 1:numel(versiones)
     ver  = versiones{k};
-    dest = fullfile(carpeta, sprintf('%s_%s.slx', modelo, ver));
-    fprintf('Exportando → %s_%s.slx ... ', modelo, ver);
+    dest = fullfile(carpeta, sprintf('%s_%s.slx', base, ver));
+    fprintf('Exportando → %s_%s.slx ... ', base, ver);
     try
         save_system(modelo, dest, 'ExportToVersion', ver);
         fprintf('OK\n');

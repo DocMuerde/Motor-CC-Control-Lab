@@ -6,11 +6,6 @@
    
    Repositorio: https://github.com/DocMuerde/Motor-CC-Control-Lab
 
-   Referencias:
-     - https://www.youtube.com/watch?v=IYPTK3t4gw8
-     - https://controlautomaticoeducacion.com/sistemas-embebidos/arduino/
-       comunicacion-serial-arduino-simulink-matlab/
-
    DESCRIPCIÓN GENERAL
    ───────────────────
    Firmware para Arduino UNO que actúa como nodo de adquisición y actuación
@@ -39,7 +34,7 @@
      A     → pin 3   (canal A cuadratura)
      I     → A0      (índice — 1 pulso/vuelta)
 
-   Driver L298N (Motor A — Timer1 → 31 250 Hz):
+   Driver TB6612FNG (Motor A — Timer1 → 31 250 Hz):
      EnA   → pin 9   (PWM — Enable motor A)
      Ain1  → pin 7   (dirección)
      Ain2  → pin 8   (dirección)
@@ -84,6 +79,8 @@
    VERSIÓN
    ───────
    v1.0 — 2024  Versión inicial para identificación (observador desactivado)
+   v1.1 — 2026  Watchdog de comunicación serie: si MATLAB deja de enviar durante
+                1 s, el motor se para automáticamente. Se reanuda al volver la señal.
 ============================================================================= */
 
 #include <AS5047P.h>   // Driver del encoder magnético AS5047P (SPI)
@@ -121,6 +118,11 @@ int pwm = 0;
 // Flag que indica que se ha recibido un paquete completo de MATLAB
 bool data_complete = false;
 
+// ─── Watchdog de comunicación ────────────────────────────────────────────────
+// Timestamp (ms) del último paquete válido recibido de MATLAB.
+// Si pasa más de 1 s sin recibir nada, se para el motor por seguridad.
+unsigned long lastReceivedTime = 0;
+
 // ─── Unión para recepción de datos (MATLAB → Arduino) ───────────────────────
 // MATLAB envía la señal de control como int16_t (2 bytes, little-endian)
 typedef union {
@@ -154,6 +156,9 @@ void setup() {
   // ── Temporizador de muestreo (Timer2 → ISR cada 10 ms = 100 Hz) ─────────
   MsTimer2::set(10, Temp2_ISR);  // Período = 10 ms
   MsTimer2::start();
+
+  // ── Inicializar watchdog de comunicación ─────────────────────────────────
+  lastReceivedTime = millis();
 
   // ── Frecuencia PWM del Timer1 (pines 9 y 10) → 31 250 Hz ────────────────
   // El registro TCCR1B controla el preescalador del Timer1.
@@ -206,9 +211,18 @@ void loop()
   // ── Bloque síncrono (ejecuta solo cuando el Timer2 dispara) ───────────────
   if (Sample_time)
   {
-    // ── Aplicar la señal de control recibida de MATLAB ──────────────────────
-    if (data_complete == true) {
-      set_speed(pwm);       // Aplica PWM + dirección al driver
+    // ── Watchdog de comunicación (timeout 1 s) ──────────────────────────────
+    // Si MATLAB deja de enviar datos más de 1 segundo, se para el motor por
+    // seguridad (p. ej. si se detiene la simulación con PWM ≠ 0).
+    // En cuanto vuelvan a llegar datos, se reanuda la operación normal.
+    if (millis() - lastReceivedTime > 1000UL) {
+      // Timeout: forzar parada
+      pwm           = 0;
+      set_speed(0);
+      data_complete = false;
+    } else if (data_complete) {
+      // Comunicación activa: aplicar la señal de control recibida
+      set_speed(pwm);
       data_complete = false;
     }
 
@@ -319,8 +333,9 @@ int recepcion() {
     }
     else if (inChar == '\n') {
       // Fin de trama: el valor int16_t ya está ensamblado en u.bytes[]
-      pwm           = u.number;   // Pasar el valor al controlador
-      data_complete = true;       // Señalizar al loop() que el dato es válido
+      pwm              = u.number;   // Pasar el valor al controlador
+      data_complete    = true;       // Señalizar al loop() que el dato es válido
+      lastReceivedTime = millis();   // Actualizar timestamp del watchdog
     }
     else {
       // Bytes de datos: acumular en el buffer de la unión
