@@ -1,4 +1,4 @@
-# Software MATLAB — `MotorCC_V3.slx`
+# Software MATLAB — `MotorCC_V3`
 
 <p align="center">
   <a href="#español">🇪🇸 Español</a> &nbsp;|&nbsp;
@@ -10,11 +10,31 @@
 <a name="español"></a>
 ## Español
 
-Este directorio contiene el único archivo de software necesario para controlar el motor desde
-MATLAB/Simulink: el modelo **`MotorCC_V3.slx`**.
+Este directorio contiene los archivos de software necesarios para controlar el motor desde
+MATLAB/Simulink. El modelo **`MotorCC_V3`** está disponible en ocho versiones exportadas,
+una por cada release de MATLAB soportado.
 
 **Requisito único:** MATLAB con **Instrument Control Toolbox**.
 No se necesitan otras toolboxes (ni Control System, ni Simulink Real-Time, ni similares).
+
+### Versiones disponibles
+
+Abre el archivo que coincide con tu versión de MATLAB (o la más cercana por debajo):
+
+| Archivo | MATLAB mínimo | MATLAB máximo recomendado |
+|---------|--------------|---------------------------|
+| `MotorCC_V3_R2025b.slx` | R2025b | *(versión de trabajo — la más reciente)* |
+| `MotorCC_V3_R2024b.slx` | R2024b | R2025a |
+| `MotorCC_V3_R2024a.slx` | R2024a | R2024a |
+| `MotorCC_V3_R2023b.slx` | R2023b | R2023b |
+| `MotorCC_V3_R2023a.slx` | R2023a | R2023a |
+| `MotorCC_V3_R2022b.slx` | R2022b | R2022b |
+| `MotorCC_V3_R2021b.slx` | R2021b | R2021b |
+| `MotorCC_V3_R2020b.slx` | R2020b | R2021a |
+
+> **Archivo de trabajo:** `MotorCC_V3_R2025b.slx` es el modelo fuente. Cualquier modificación
+> debe hacerse sobre él y luego propagarse a las versiones anteriores con `exportar_versiones.m`
+> (ver [Scripts de utilidad](#scripts-de-utilidad)).
 
 ---
 
@@ -158,9 +178,41 @@ Total: 14 bytes por ciclo (100 Hz → 1 400 bytes/s)
    Arduino → OK.
 4. Pulsar **Run** (Ctrl+T o botón ▶). La simulación corre en tiempo real a 100 Hz.
 5. Observar ángulo y velocidad en los Scopes durante la ejecución.
-6. **Parar siempre con el motor en reposo** (señal de control `u = 0`) antes de pulsar Stop.
-   Si se para con el motor en movimiento, el driver mantiene el último PWM y el motor sigue
-   girando sin control.
+6. **Parar la simulación**: el modelo incluye un callback `StopFcn` que envía automáticamente
+   `u = 0` al Arduino en el momento de pulsar Stop — el motor se detiene solo, sin intervención
+   manual. Si por algún motivo el callback no llega a ejecutarse (crash de MATLAB, desconexión
+   serie inesperada), el watchdog del firmware Arduino para el motor tras ≈ 100 ms sin recibir
+   datos.
+
+---
+
+### Scripts de utilidad
+
+#### `exportar_versiones.m`
+
+Exporta `MotorCC_V3_R2025b.slx` a las siete versiones anteriores de MATLAB de forma automática.
+Debe ejecutarse con **MATLAB R2025b** desde la carpeta `software/matlab/`:
+
+```matlab
+cd('<ruta>/Motor-CC-Control-Lab/software/matlab')
+run('exportar_versiones.m')
+```
+
+El script usa `save_system(..., 'ExportToVersion', '<release>')` para cada versión de la lista.
+Los archivos resultantes sobrescriben los existentes en la misma carpeta.
+
+#### `set_stopfcn.m`
+
+Inyecta el callback `StopFcn` en `MotorCC_V3_R2025b.slx`. Solo es necesario ejecutarlo
+si se recrea el modelo desde cero o si el callback desaparece accidentalmente.
+Después de ejecutarlo, volver a lanzar `exportar_versiones.m` para propagar el callback
+a todas las versiones exportadas.
+
+```matlab
+cd('<ruta>/Motor-CC-Control-Lab/software/matlab')
+run('set_stopfcn.m')         % añade StopFcn a R2025b
+run('exportar_versiones.m')  % propaga a R2020b-R2024b
+```
 
 ---
 
@@ -304,11 +356,31 @@ Para que esta propagación funcione en todas las versiones fue necesario:
 <a name="english"></a>
 ## English
 
-This directory contains the single software file needed to control the motor from
-MATLAB/Simulink: **`MotorCC_V3.slx`**.
+This directory contains the software files needed to control the motor from
+MATLAB/Simulink. The **`MotorCC_V3`** model is available in eight exported versions,
+one per supported MATLAB release.
 
 **Single requirement:** MATLAB with the **Instrument Control Toolbox**.
 No other toolboxes needed (no Control System, Simulink Real-Time, or similar).
+
+### Available versions
+
+Open the file that matches your MATLAB version (or the closest one below):
+
+| File | Minimum MATLAB | Recommended up to |
+|------|---------------|-------------------|
+| `MotorCC_V3_R2025b.slx` | R2025b | *(working file — most recent)* |
+| `MotorCC_V3_R2024b.slx` | R2024b | R2025a |
+| `MotorCC_V3_R2024a.slx` | R2024a | R2024a |
+| `MotorCC_V3_R2023b.slx` | R2023b | R2023b |
+| `MotorCC_V3_R2023a.slx` | R2023a | R2023a |
+| `MotorCC_V3_R2022b.slx` | R2022b | R2022b |
+| `MotorCC_V3_R2021b.slx` | R2021b | R2021b |
+| `MotorCC_V3_R2020b.slx` | R2020b | R2021a |
+
+> **Working file:** `MotorCC_V3_R2025b.slx` is the source model. Any changes must be made
+> there first and then propagated to older versions with `exportar_versiones.m`
+> (see [Utility scripts](#utility-scripts)).
 
 ---
 
@@ -443,9 +515,40 @@ PWM_echo   4 bytes — float32, little-endian  (applied PWM, echoed back)
    available ports → select the Arduino port → OK.
 4. Press **Run** (Ctrl+T or the ▶ button). The simulation runs in real time at 100 Hz.
 5. Watch angle and velocity on the Scopes during execution.
-6. **Always stop with the motor at rest** (control signal `u = 0`) before pressing Stop.
-   Stopping with the motor running leaves the driver at the last PWM value and the motor
-   keeps spinning uncontrolled.
+6. **Stop the simulation**: the model includes a `StopFcn` callback that automatically sends
+   `u = 0` to the Arduino the moment Stop is pressed — the motor stops on its own, with no
+   manual action needed. If for any reason the callback does not execute (MATLAB crash,
+   unexpected serial disconnect), the Arduino firmware watchdog stops the motor after
+   approx. 100 ms without receiving data.
+
+---
+
+### Utility scripts
+
+#### `exportar_versiones.m`
+
+Exports `MotorCC_V3_R2025b.slx` to the seven earlier MATLAB versions automatically.
+Must be run with **MATLAB R2025b** from the `software/matlab/` folder:
+
+```matlab
+cd('<path>/Motor-CC-Control-Lab/software/matlab')
+run('exportar_versiones.m')
+```
+
+The script uses `save_system(..., 'ExportToVersion', '<release>')` for each version in the list.
+Output files overwrite the existing ones in the same folder.
+
+#### `set_stopfcn.m`
+
+Injects the `StopFcn` callback into `MotorCC_V3_R2025b.slx`. Only needed if the model is
+rebuilt from scratch or the callback is accidentally lost. After running it, re-run
+`exportar_versiones.m` to propagate the callback to all exported versions.
+
+```matlab
+cd('<path>/Motor-CC-Control-Lab/software/matlab')
+run('set_stopfcn.m')         % add StopFcn to R2025b
+run('exportar_versiones.m')  % propagate to R2020b-R2024b
+```
 
 ---
 
