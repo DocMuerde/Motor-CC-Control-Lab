@@ -80,7 +80,8 @@
    ───────
    v1.0 — 2024  Versión inicial para identificación (observador desactivado)
    v1.1 — 2026  Watchdog de comunicación serie: si MATLAB deja de enviar durante
-                1 s, el motor se para automáticamente. Se reanuda al volver la señal.
+                1 s, la consigna se reduce gradualmente (parada suave, ~1,3 s desde
+                consigna plena). Se reanuda al volver la señal.
 ============================================================================= */
 
 #include <AS5047P.h>   // Driver del encoder magnético AS5047P (SPI)
@@ -120,8 +121,15 @@ bool data_complete = false;
 
 // ─── Watchdog de comunicación ────────────────────────────────────────────────
 // Timestamp (ms) del último paquete válido recibido de MATLAB.
-// Si pasa más de 1 s sin recibir nada, se para el motor por seguridad.
+// Si pasa más de 1 s sin recibir nada, se reduce la consigna gradualmente
+// hasta llegar a 0 (parada suave), evitando el golpe brusco en la reductora.
 unsigned long lastReceivedTime = 0;
+
+// Decremento de |pwm| por período de muestreo (10 ms) durante la parada suave.
+// Con WATCHDOG_RAMP_STEP = 2 y Ts = 10 ms:
+//   t_parada ≈ |pwm_actual| / 2 × 10 ms  →  máx. ≈ 1,3 s desde consigna plena.
+// Aumentar el valor para una parada más rápida; reducirlo para más suave.
+#define WATCHDOG_RAMP_STEP 2
 
 // ─── Unión para recepción de datos (MATLAB → Arduino) ───────────────────────
 // MATLAB envía la señal de control como int16_t (2 bytes, little-endian)
@@ -211,14 +219,16 @@ void loop()
   // ── Bloque síncrono (ejecuta solo cuando el Timer2 dispara) ───────────────
   if (Sample_time)
   {
-    // ── Watchdog de comunicación (timeout 1 s) ──────────────────────────────
-    // Si MATLAB deja de enviar datos más de 1 segundo, se para el motor por
-    // seguridad (p. ej. si se detiene la simulación con PWM ≠ 0).
+    // ── Watchdog de comunicación (timeout 1 s + parada suave) ─────────────────
+    // Si MATLAB deja de enviar datos más de 1 s (p. ej. simulación detenida con
+    // PWM ≠ 0), se reduce la consigna gradualmente en lugar de cortarla de golpe,
+    // protegiéndose así los engranajes de la reductora.
     // En cuanto vuelvan a llegar datos, se reanuda la operación normal.
     if (millis() - lastReceivedTime > 1000UL) {
-      // Timeout: forzar parada
-      pwm           = 0;
-      set_speed(0);
+      // Timeout: rampa de bajada — reducir |pwm| en WATCHDOG_RAMP_STEP cada Ts
+      if      (pwm >  0) pwm = max(0, pwm - WATCHDOG_RAMP_STEP);
+      else if (pwm <  0) pwm = min(0, pwm + WATCHDOG_RAMP_STEP);
+      set_speed(pwm);
       data_complete = false;
     } else if (data_complete) {
       // Comunicación activa: aplicar la señal de control recibida
