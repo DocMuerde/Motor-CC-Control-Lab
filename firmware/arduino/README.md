@@ -11,8 +11,17 @@ El firmware corre en un **Arduino UNO** y realiza las siguientes funciones:
 3. **Envío a MATLAB** de posición y velocidad a 100 Hz por puerto serie.
 4. **Recepción de la acción de control** enviada por MATLAB.
 5. **Generación de PWM** al driver TB6612FNG para mover el motor.
+6. **Watchdog de comunicación** para reducir progresivamente el PWM hasta cero si MATLAB deja de enviar órdenes.
 
 > **Nota de diseño:** El código incluye un **observador de Luenberger** (identificado con este motor a 12 V) que está implementado y validado, pero se deja desactivado. Si se necesita filtrar la velocidad, se realiza en MATLAB, que es más flexible y no requiere recompilar el firmware. Para activarlo, ver los comentarios en `main/main.ino`.
+
+### Watchdog de comunicación: parada progresiva
+
+El firmware incorpora un watchdog que supervisa la recepción de órdenes desde MATLAB. Si transcurre **más de 1 segundo sin recibir una orden**, comienza una rampa de parada: reduce la magnitud del PWM en **2 unidades cada 10 ms**, manteniendo su signo hasta llegar a cero. Así evita cortar de golpe la acción del motor.
+
+Desde un PWM de magnitud 255, la rampa tarda aproximadamente **1,28 segundos adicionales** al segundo de espera. Es el tiempo hasta que el PWM llega a cero; el tiempo de detención mecánica depende del equipo. Si vuelven a recibirse órdenes durante la rampa o después de ella, el firmware vuelve a aplicar la orden recibida.
+
+Este comportamiento está implementado en [`main/main.ino`](main/main.ino), mediante `lastReceivedTime`, el umbral de `1000` ms y `WATCHDOG_RAMP_STEP = 2`.
 
 ### Librerías necesarias
 
@@ -82,8 +91,17 @@ The firmware runs on an **Arduino UNO** and performs the following functions:
 3. **Sending data to MATLAB** — position and velocity at 100 Hz over serial.
 4. **Receiving the control action** sent by MATLAB.
 5. **PWM generation** to the TB6612FNG driver to move the motor.
+6. **Communication watchdog** to progressively reduce PWM to zero if MATLAB stops sending commands.
 
 > **Design note:** The code includes a **Luenberger observer** (identified for this motor at 12 V) that is fully implemented and validated, but intentionally left inactive. Velocity filtering is done in MATLAB, which is more flexible and does not require recompiling the firmware. To enable it, see the comments in `main/main.ino`.
+
+### Communication watchdog: gradual stop
+
+The firmware includes a watchdog that monitors incoming commands from MATLAB. After **more than 1 second without a command**, it starts a stopping ramp: PWM magnitude decreases by **2 units every 10 ms**, retaining its sign until it reaches zero. This avoids abruptly cutting the motor command.
+
+Starting at a PWM magnitude of 255, the ramp takes approximately **1.28 seconds in addition to** the initial one-second wait. This is the time for PWM to reach zero; the mechanical stopping time depends on the rig. If commands resume during or after the ramp, the firmware applies the incoming command again.
+
+This behavior is implemented in [`main/main.ino`](main/main.ino), using `lastReceivedTime`, the `1000` ms threshold and `WATCHDOG_RAMP_STEP = 2`.
 
 ### Required libraries
 
