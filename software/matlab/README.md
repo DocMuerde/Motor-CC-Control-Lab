@@ -178,11 +178,9 @@ Total: 14 bytes por ciclo (100 Hz → 1 400 bytes/s)
    Arduino → OK.
 4. Pulsar **Run** (Ctrl+T o botón ▶). La simulación corre en tiempo real a 100 Hz.
 5. Observar ángulo y velocidad en los Scopes durante la ejecución.
-6. **Parar la simulación**: el modelo incluye un callback `StopFcn` que envía automáticamente
-   `u = 0` al Arduino en el momento de pulsar Stop — el motor se detiene solo, sin intervención
-   manual. Si por algún motivo el callback no llega a ejecutarse (crash de MATLAB, desconexión
-   serie inesperada), el watchdog del firmware Arduino para el motor tras ≈ 100 ms sin recibir
-   datos.
+6. **Parar la simulación**: pulsa **Stop** y espera a que el motor se detenga. Los modelos V3 guardados no contienen un callback `StopFcn`. El firmware comienza a reducir el PWM tras más de **1 s** sin recibir órdenes, en pasos de **2 unidades cada 10 ms** hasta cero (hasta unos 1,28 s adicionales desde |PWM| = 255).
+
+El modelo V3 suministrado aplica una señal de prueba en **lazo abierto**; no tiene un regulador realimentado conectado. Arduino envía posición, velocidad y el valor de PWM, y Simulink muestra las dos primeras señales en los Scopes.
 
 ---
 
@@ -515,11 +513,9 @@ PWM_echo   4 bytes — float32, little-endian  (applied PWM, echoed back)
    available ports → select the Arduino port → OK.
 4. Press **Run** (Ctrl+T or the ▶ button). The simulation runs in real time at 100 Hz.
 5. Watch angle and velocity on the Scopes during execution.
-6. **Stop the simulation**: the model includes a `StopFcn` callback that automatically sends
-   `u = 0` to the Arduino the moment Stop is pressed — the motor stops on its own, with no
-   manual action needed. If for any reason the callback does not execute (MATLAB crash,
-   unexpected serial disconnect), the Arduino firmware watchdog stops the motor after
-   approx. 100 ms without receiving data.
+6. **Stop the simulation**: click **Stop** and wait for the motor to stop. The saved V3 models do not contain a `StopFcn` callback. The firmware starts reducing PWM after more than **1 s** without commands, by **2 units every 10 ms** until zero (up to approximately 1.28 s more from |PWM| = 255).
+
+The supplied V3 model applies an **open-loop** test signal; no feedback controller is connected. Arduino sends position, velocity and the PWM value, and Simulink displays the first two signals in the Scopes.
 
 ---
 
