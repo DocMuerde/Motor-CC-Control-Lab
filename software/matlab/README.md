@@ -40,18 +40,16 @@ Las exportaciones están incluidas en el repositorio. Su presencia no equivale a
 
 #### Nivel raíz
 
-![Vista del nivel raíz — Pulse Generator, Constant, Sum, bloque Motor_CC y los dos Scopes](../../docs/images/matlab/01_root_level.png)
+![Captura anterior del nivel raíz; el modelo actual conecta Pulse Generator directamente a Motor_CC](../../docs/images/matlab/01_root_level.png)
 
 El nivel raíz es el **espacio de trabajo del estudiante**. Viene precargado con un ejemplo de
-lazo abierto para verificar el funcionamiento antes de añadir ningún controlador:
+lazo abierto para verificar el funcionamiento antes de añadir ningún controlador. El generador entra directamente en `Motor_CC`: la orden alterna entre **0 y +50**, con periodo de 10 s y ciclo de trabajo del 50 %. Se han eliminado los bloques `Constant` y `Sum` del ejemplo anterior. La captura anterior aún muestra esos bloques; la tabla describe el modelo actualizado:
 
 | Bloque | Función en el ejemplo |
 |--------|-----------------------|
 | **Pulse Generator** | Genera pulsos entre 0 y 50, de periodo 10 s y ciclo de trabajo del 50 % |
-| **Constant** | Offset de 50, que se resta a la salida del generador |
-| **Sum** (`\|+-`) | Resta 50 a los pulsos → señal de prueba entre −50 y 0 |
 | **Motor_CC** | Bloque con máscara que encapsula toda la comunicación con el Arduino (ver más abajo) |
-| **Scope / Scope1** | Muestran en tiempo real el ángulo (°) y la velocidad (°/s) del eje |
+| **Scope / Scope1** | Muestran el ángulo (°) y la velocidad (°/s) del eje |
 
 > **Para cerrar el lazo:** el estudiante añade su bloque controlador (Gain, PID Controller,
 > Transfer Fcn discreta…) entre la señal de referencia y la entrada de `Motor_CC`, y conecta
@@ -314,18 +312,16 @@ The exported files are included in the repository. Their presence does not imply
 
 #### Root level
 
-![Root level view — Pulse Generator, Constant, Sum, Motor_CC block and two Scopes](../../docs/images/matlab/01_root_level.png)
+![Earlier root-level screenshot; the current model connects Pulse Generator directly to Motor_CC](../../docs/images/matlab/01_root_level.png)
 
 The root level is the **student's workspace**. It ships with an open-loop test example to
-verify communication before adding any controller:
+verify communication before adding any controller. The generator feeds `Motor_CC` directly: the command alternates between **0 and +50**, with a 10 s period and 50 % duty cycle. The previous `Constant` and `Sum` blocks have been removed. The screenshot above still shows those blocks; the table describes the updated model:
 
 | Block | Role in the example |
 |-------|---------------------|
 | **Pulse Generator** | Pulses between 0 and 50, period 10 s, 50 % duty cycle |
-| **Constant** | Offset of 50, subtracted from the pulse generator output |
-| **Sum** (`\|+-`) | Subtracts 50 from the pulses → test command between −50 and 0 |
 | **Motor_CC** | Masked subsystem encapsulating all Arduino communication (see below) |
-| **Scope / Scope1** | Real-time display of shaft angle (°) and velocity (°/s) |
+| **Scope / Scope1** | Display of shaft angle (°) and velocity (°/s) |
 
 > **To close the loop:** the student adds their controller block (Gain, PID Controller,
 > discrete Transfer Fcn…) between the reference signal and `Motor_CC`'s input, and connects
