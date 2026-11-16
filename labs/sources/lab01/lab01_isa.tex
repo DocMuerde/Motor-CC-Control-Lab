@@ -88,7 +88,7 @@
 {\LARGE\bfseries\color{isa} 2. Obtener la característica estática}\par
 La \textbf{característica estática} es la curva que relaciona cada orden PWM constante con la velocidad media del eje una vez alcanzado el régimen permanente. Para obtenerla, modifica el modelo de Simulink y mide la velocidad en todo el rango de $-255$ a $+255$. Mantén la misma alimentación y conserva el signo de la velocidad.
 
-\textbf{Zona muerta.} Es el intervalo de órdenes PWM alrededor de cero en el que, partiendo del reposo, el motor no llega a girar. Después del barrido general haremos un ensayo específico para medir el menor y el mayor PWM que todavía dejan el motor parado, $-Z_{n,-}$ y $+Z_{n,+}$.
+\textbf{Zona muerta.} Es el intervalo de órdenes PWM alrededor de cero en el que, partiendo del reposo, el motor no llega a girar. Después del barrido general haremos un ensayo específico para medir el menor y el mayor PWM que todavía dejan el motor parado, $Z_n$ y $Z_p$.
 
 \subsection*{\color{isa} Preparar el control manual en Simulink}
 \begin{enumerate}[label=\textbf{2.\arabic*}]
@@ -105,34 +105,23 @@ La \textbf{característica estática} es la curva que relaciona cada orden PWM c
 \begin{enumerate}
 \item En \textbf{Edit}, fija \texttt{u} en $-255$ para la primera medida. Después, aumenta \texttt{u} siguiendo este vector en orden: $-255$, $-200$, $-150$, $-100$, $-50$, $0$, $50$, $100$, $150$, $200$ y $255$. Los límites de la zona muerta se miden por separado en el ensayo 2.
 \item \textbf{Cada vez que cambies \texttt{u}, espera a que se estabilice \texttt{dy}.} El cambio de PWM produce un transitorio. Después, el ruido sigue presente, pero la velocidad fluctúa alrededor de un nivel medio sin tendencia a subir ni bajar. Mantén cada PWM al menos un segundo más una vez alcanzado ese régimen.
-\item En \textbf{Data Inspector}, muestra \texttt{dy} arriba y \texttt{u} abajo con el mismo eje de tiempo. Para cada tramo de PWM constante, descarta el transitorio y delimita con los cursores al menos un segundo de régimen permanente. Anota la media de las muestras de ese intervalo, con su signo y en grados por segundo. Si no hay un tramo estable, repite ese nivel.
-\item Al terminar, pon $u=0$, espera a que el motor se detenga y pulsa \textbf{Stop}. Desde \textbf{Export} en Data Inspector, guarda la ejecución completa en \texttt{lab01\_estatica.mat}. Conserva la pareja $(u,\omega_{\mathrm{ss}})$ de cada nivel medido.
+\item En \textbf{Data Inspector}, muestra \texttt{dy} arriba y \texttt{u} abajo con el mismo eje de tiempo. Para cada tramo de PWM constante, descarta el transitorio y delimita con los cursores al menos un segundo de régimen permanente. Lee el mínimo y el máximo de \texttt{dy} en ese intervalo y calcula $\omega_{\mathrm{ss}}=(\omega_{\min}+\omega_{\max})/2$, con sus signos y en grados por segundo. Si no hay un tramo estable, repite ese nivel.
 \end{enumerate}
 
-\enlargethispage{3\baselineskip}
-\subsection*{\color{isa} Dibujar la curva en MATLAB}
-\begingroup\small
-Escribe los valores entre corchetes, separados por espacios. Declara \texttt{u} con las órdenes PWM y \texttt{wss} con sus velocidades medias. Los dos vectores deben tener la misma longitud y cada posición debe corresponder al mismo ensayo. Si un umbral queda fuera de $\pm 50$, ordena las parejas por PWM antes de dibujar.
-\begin{verbatim}
-u = [-255 -200 -150 -100 -50 0 50 100 150 200 255];
-wss = nan(size(u));  % Sustituye cada NaN por su velocidad media.
-[u, orden] = sort(u);
-wss = wss(orden);
-figure
-plot(u, wss, 'o-')
-grid on
-title('Caracteristica estatica del motor')
-xlabel('Orden PWM (unidades de PWM)')
-ylabel('Velocidad en regimen permanente (grados/s)')
-\end{verbatim}
-\endgroup
+{\centering
+\includegraphics[width=0.87\linewidth]{figuras/barrido_pwm.png}\par
+{\small Barrido en Data Inspector. Los cursores muestran dos lecturas de ejemplo en tramos ya estabilizados, con $u=-255$ y $u=-200$. Para cada punto de la curva, mide ambos extremos de velocidad en su tramo estable y calcula su media.}\par}
+
+\textbf{Anota las parejas medidas.} Completa el ensayo de zona muerta antes de dibujar la característica estática.
 
 \newpage
 {\LARGE\bfseries\color{isa} Zona muerta y punto de trabajo}\par
 \section*{\color{isa} 2.4. Ensayo 2. Delimitar la zona muerta}
-Inicia una ejecución separada con el motor parado. En el sentido positivo ensaya $u=0,1,2,\ldots$ y espera tras cada cambio. Cuando detectes giro sostenido, toma el valor inmediatamente anterior como $+Z_{n,+}$, el mayor PWM sin giro. Vuelve a cero, espera a que el eje se pare y repite con $u=0,-1,-2,\ldots$. Toma el valor inmediatamente anterior al primer giro como $-Z_{n,-}$, el menor PWM sin giro.
+Inicia una ejecución separada con el motor parado. Desde \textbf{Edit}, empieza en $u=+5$ y aumenta la orden de uno en uno ($+5,+6,+7,\ldots$). Espera tras cada cambio. Cuando veas que el eje empieza a girar de forma sostenida, anota el PWM inmediatamente anterior como $Z_p$, el mayor valor sin giro. Vuelve a cero, espera a que el eje se pare y repite desde $u=-5$, bajando de uno en uno ($-5,-6,-7,\ldots$). El último valor sin giro es $Z_n$. Si ya gira en $+5$ o $-5$, vuelve a cero y recorre ese sentido desde la primera unidad para localizar el límite.
 
-Comprueba en la posición \texttt{y} si el eje gira de forma sostenida y mide la velocidad media \textbf{en régimen permanente}. Anota en cada sentido el último PWM sin giro y el primero con giro, con sus velocidades medias. Los límites pueden ser distintos en cada sentido y entre motores. Añade las parejas medidas a \texttt{u} y \texttt{wss}, ordénalas por PWM y marca los límites en la misma gráfica.
+\textbf{Observa el eje.} Cerca del arranque, la velocidad es tan pequeña que puede confundirse con el ruido de \texttt{dy}. Comprueba visualmente que hay giro sostenido y usa la evolución de la posición \texttt{y} para confirmarlo. Anota en cada sentido el último PWM sin giro y el primero con giro, junto con sus velocidades medias \textbf{en régimen permanente}.
+
+Añade cada límite que hayas medido, con su velocidad correspondiente, antes de dibujar la curva final.
 
 \begin{center}
 \begin{tikzpicture}[x=1cm,y=0.62cm]
@@ -140,8 +129,8 @@ Comprueba en la posición \texttt{y} si el eje gira de forma sostenida y mide la
 \draw[->] (-5,0)--(5,0) node[right] {PWM $u$};
 \draw[->] (0,-2.2)--(0,2.5) node[above] {$\omega_{\mathrm{ss}}$};
 \draw[very thick,isa] (-4.4,-1.8)--(-1.2,0)--(1.3,0)--(4.4,1.8);
-\draw[dashed] (-1.2,0)--(-1.2,-1.8) node[below] {$-Z_{n,-}$};
-\draw[dashed] (1.3,0)--(1.3,-1.8) node[below] {$+Z_{n,+}$};
+\draw[dashed] (-1.2,0)--(-1.2,-1.8) node[below] {$Z_n$};
+\draw[dashed] (1.3,0)--(1.3,-1.8) node[below] {$Z_p$};
 \node at (0,1.5) {\small Zona muerta};
 \fill[isa] (2.45,0.67) circle (2pt) node[above] {$u_0$};
 \fill[isa] (3.45,1.25) circle (2pt) node[above] {$u_1$};
@@ -149,15 +138,58 @@ Comprueba en la posición \texttt{y} si el eje gira de forma sostenida y mide la
 \small Figura 1. Curva esquemática. Los umbrales se obtienen de tus medidas.
 \end{center}
 
+{\centering
+\includegraphics[width=10.2cm]{figuras/ensayo_zona_muerta.png}\par
+{\small Ensayo de zona muerta. Cerca de cero, el ruido de \texttt{dy} dificulta distinguir el inicio del giro.}\par}
+
+\newpage
+\subsection*{\color{isa} 2.5. Dibujar la característica estática en MATLAB}
+\begingroup\small
+Cuando tengas los dos ensayos, forma un único vector \texttt{u} en orden ascendente. Intercala los PWM de los límites de la zona muerta en su posición y coloca en \texttt{dy} la velocidad correspondiente a cada entrada. Si un límite coincide con un nivel del barrido, usa una sola pareja.
+
+Antes de ejecutar el código, sustituye cada etiqueta entre \texttt{< >} por el número que hayas medido. Cada velocidad se estima promediando el mínimo y el máximo de \texttt{dy} observados después del transitorio. Conserva el signo de ambas lecturas antes de sumarlas. Genera una sola gráfica con tus medidas.
+
+\begin{verbatim}
+Zn = <limite negativo sin giro>;
+Zp = <limite positivo sin giro>;
+u = [-255 -200 -150 -100 -50 Zn 0 Zp 50 100 150 200 255];
+
+dy = [<velocidad para -255>
+      <velocidad para -200>
+      <velocidad para -150>
+      <velocidad para -100>
+      <velocidad para -50>
+      <velocidad para Zn>
+      <velocidad para 0>
+      <velocidad para Zp>
+      <velocidad para 50>
+      <velocidad para 100>
+      <velocidad para 150>
+      <velocidad para 200>
+      <velocidad para 255>];
+figure
+plot(u, dy, 'o-')
+grid on
+title('Caracteristica estatica del motor')
+xlabel('Orden PWM (unidades de PWM)')
+ylabel('Velocidad en regimen permanente (grados/s)')
+\end{verbatim}
+\endgroup
+
+{\centering
+\includegraphics[width=0.9\linewidth]{figuras/curva_estatica_medida.png}\par
+{\small Resultado esperado. La curva reúne los datos del barrido y del ensayo de zona muerta. Marca los límites que midas en tu motor, $Z_n$ y $Z_p$.}\par}
+
+\newpage
 \section*{\color{isa} 3. Elegir el punto de trabajo}
 Elige una rama de \textbf{velocidades positivas o negativas}. Dentro de ella, escoge un PWM $u_0$ donde el giro sea estable y la curva aproximadamente lineal. Anota $u_0$ y su velocidad media $\omega_0$.
 
 Elige un segundo PWM $u_1$ en el mismo tramo. Comprueba en la curva que \textbf{todo el intervalo entre $u_0$ y $u_1$ queda en la misma rama y fuera de la zona muerta}. La diferencia $\Delta u=u_1-u_0$ debe producir un cambio de velocidad que se distinga del ruido. Anota ambos niveles y justifica la elección con tu gráfica.
 
-\newpage
 \section*{\color{isa} 4. Identificar con un escalón local}
+\textbf{Muestreo.} Arduino envía una medida cada 0,01 s (100 Hz). Conserva la configuración de muestreo del modelo. Reducir el paso del solver no añade medidas nuevas del motor.
 \begin{enumerate}
-\item Usa un bloque \textbf{Step}. Configura \textbf{Initial value} en $u_0$ y \textbf{Final value} en $u_1$. Empieza con \textbf{Step time} de 5 s y \textbf{Stop Time} de 10 s. Si la velocidad no se estabiliza antes o después del escalón, amplía los tiempos y repite.
+\item Usa un bloque \textbf{Step}. Configura \textbf{Initial value} en $u_0$ y \textbf{Final value} en $u_1$. Empieza con \textbf{Step time} de 0,5 s y \textbf{Stop Time} de 1 s. Si no se distinguen los tramos estables antes y después del escalón, amplía el ensayo a 2 o 3 s y ajusta el instante del escalón según el tramo que necesites alargar.
 \item En Data Inspector, guarda la orden y la velocidad. Mide las velocidades medias $\omega_0$ y $\omega_1$ en los tramos estables anterior y posterior. Calcula $K=(\omega_1-\omega_0)/(u_1-u_0)$.
 \item Calcula $\omega_{63}=\omega_0+0{,}632(\omega_1-\omega_0)$. Mide $\tau$ desde el instante del escalón hasta que la velocidad alcanza ese nivel. Usa $G_\omega(s)=K/(1+\tau s)$ para describir los cambios de velocidad alrededor del punto de trabajo.
 \end{enumerate}
