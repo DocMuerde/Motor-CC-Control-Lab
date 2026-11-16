@@ -51,6 +51,8 @@ El equipo destaca en cuatro aspectos clave:
 
 ### Montaje
 
+[Documentación y tareas de montaje](hardware/assembly/)
+
 ### Lista de materiales para el montaje
 
 | Cant. | Referencia | Descripción |
@@ -92,6 +94,7 @@ Motor-CC-Control-Lab/
 ├── software/
 │   └── matlab/           # Modelo Simulink MotorCC_V3.slx (Instrument Control Toolbox)
 ├── hardware/
+│   ├── assembly/         # Documentación y tareas de montaje
 │   ├── 3d-printing/      # Archivos STL para imprimir las piezas
 │   └── pcb/              # Esquemáticos y layout de la placa de circuito impreso
 ├── datasheets/
@@ -100,9 +103,9 @@ Motor-CC-Control-Lab/
 │   └── driver/           # Datasheet del driver
 ├── docs/                 # Documentación, fotos, manual de usuario
 └── labs/                 # Guiones de prácticas
-    ├── lab01/
-    ├── lab02/
-    └── lab03/
+    ├── pdfs/             # Guiones listos para consultar
+    ├── data/             # Datos por práctica
+    └── sources/          # Fuentes y figuras por práctica
 ```
 
 ### Requisitos
@@ -179,6 +182,8 @@ The rig stands out in four key areas:
 
 ### Assembly
 
+[Assembly documentation and tasks](hardware/assembly/)
+
 ### Bill of Materials
 
 | Qty | Reference | Description |
@@ -231,8 +236,8 @@ University of Seville — Contact: [ialvarado@us.es](mailto:ialvarado@us.es)
 - Firmware Arduino (`firmware/arduino/main/main.ino`): Ts = 10 ms (100 Hz), protocolo serie binario, observador de Luenberger (desactivado, listo para activar).
 - Modelo Simulink (`software/matlab/MotorCC_V3_R2025b.slx`): detección automática de puerto serie, bloque único para cerrar el lazo.
 - Exportación del modelo Simulink a versiones anteriores: `MotorCC_V3_R2025b_R2024b.slx` … `R2020b.slx` generados con `exportar_versiones.m`.
-- Presentación de diapositivas **Lab 01** (`labs/lab01/lab01_slides.tex/.pdf`): descripción del equipo, protocolo, experimentos de identificación.
-- Guía de prácticas **Lab 01** y **Lab 02** (`labs/labXX/labXX_isa.tex/.pdf`).
+- [Guion de Lab 01](labs/pdfs/lab01_isa.pdf): puesta en marcha, curva estática e identificación ante un escalón local.
+- [PDFs de las prácticas](labs/pdfs/) y [fuentes LaTeX](labs/sources/).
 - Documentación del README: esquema del sistema (diagrama), sección de montaje con lista de materiales y sección de futuras mejoras.
 - Todo el repositorio renombrado de GEPOC → **ISA**.
 
@@ -240,7 +245,7 @@ University of Seville — Contact: [ialvarado@us.es](mailto:ialvarado@us.es)
 
 1. **Revisar y ajustar las guías de prácticas con el equipo real** — verificar experimentalmente los parámetros del modelo (K, τ) y las ganancias de los controladores antes de pasárselas a los alumnos.
 2. **Crear los boletines de soluciones** (Lab 01 y Lab 02) — una vez realizados los experimentos reales.
-3. **Modificar los diseños 3D para incluir insertos metálicos roscados** — rediseñar los orificios de los tornillos M3 para albergar insertos de latón M3 de calor, mejorando la durabilidad del montaje.
+3. **Documentar el montaje y rediseñar las piezas para insertos roscados** — ver las [tareas de montaje](hardware/assembly/#tareas-pendientes--to-do).
 4. **Añadir guías de cables en la base** — diseñar e imprimir pequeños clips o canales en la parte inferior de la base para ordenar el cableado motor–driver.
 5. **Lab 03** (opcional) — práctica avanzada (control en cascada, estimación de estado, etc.) si se quiere ampliar el material.
 

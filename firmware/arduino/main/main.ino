@@ -203,6 +203,7 @@ void loop()
   // Posición inicial: se centra el rango en 0° restando 180° al primer valor leído
   static float ph = as5047p.readAngleDegree() - 180;
   static float angle_ant = 0;  // Ángulo raw en el instante anterior
+  static bool primera_muestra = true;
 
   // ── Parámetros del observador de Luenberger (identificado con este motor) ──
   float a11 = 0.8669, a12 = 0, a21 = 0.0093, a22 = 1;    // Matriz A (modelo discreto)
@@ -241,6 +242,12 @@ void loop()
     angle_raw = as5047p.readAngleDegree() - 180;
 
     // ── Calcular velocidad angular (diferencia de posición / Ts) ─────────────
+    // La primera lectura establece la referencia. Todavía no hay dos muestras
+    // separadas por Ts, así que se envía velocidad cero solo en ese instante.
+    if (primera_muestra) {
+      angle_ant = angle_raw;
+      primera_muestra = false;
+    }
     w_raw = angle_raw - angle_ant;
 
     // Gestión de saltos de ±360° al cruzar 0°/360°
