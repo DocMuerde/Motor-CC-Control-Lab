@@ -64,3 +64,13 @@ text(ax, limites(1), 0, sprintf('Zn', limites(1)), ...
 text(ax, limites(2), 0, sprintf('Zp', limites(2)), ...
     'HorizontalAlignment', 'left', 'VerticalAlignment', 'top', ...
     'Color', colorZM, 'FontWeight', 'bold');
+
+% ganacia y constante de tiempo
+uo=50;
+yo=413.1;
+u1=150;
+y1=1298.6;
+K=(y1-yo)/(u1-uo);
+dy63=yo+0.632*(y1-yo);
+tau=0.06;
+ret=0.02;

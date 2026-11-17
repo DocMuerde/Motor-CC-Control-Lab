@@ -2,7 +2,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noshorthands]{babel}
 \usepackage[margin=2cm]{geometry}
-\usepackage{xcolor,enumitem,hyperref,tikz}
+\usepackage{amsmath,xcolor,enumitem,hyperref,tikz}
 \definecolor{isa}{RGB}{0,70,130}
 \hypersetup{colorlinks=true,urlcolor=isa}
 \setlength{\parindent}{0pt}
@@ -52,7 +52,7 @@
 \begin{enumerate}
 \item Comprueba que \textbf{Pulse Generator} entra directamente en \texttt{Motor\_CC}. Usa amplitud 50, período de 10 s, ancho del 50\,\% y retardo de fase 0 s. La orden de PWM vale 50 durante los primeros 5 s y después baja a cero.
 \item En la barra de Simulink fija \textbf{Stop Time} en \textbf{9 s}. Así registras el arranque y cuatro segundos con orden cero antes del siguiente pulso.
-\item Haz doble clic sobre cada línea para nombrarla. Llama \textbf{u} a la salida de \textbf{Pulse Generator} (PWM), \textbf{y} a \textbf{Angle} (posición) y \textbf{dy} a \textbf{Speed} (velocidad, derivada de la posición). Para enviar los datos a \textbf{Simulation Data Inspector}\footnote{El Data Inspector será la herramienta que usaremos para visualizar y medir los ensayos.}, haz clic en cada línea hasta que se resalte en azul y pulsa el segundo icono, con forma de señal Wi-Fi (\textbf{Log Selected Signal}). Repite el registro en las tres líneas.
+\item Haz doble clic sobre cada línea para nombrarla. Llama \textbf{u} a la salida de \textbf{Pulse Generator} (PWM), \textbf{y} a \textbf{Angle} (posición) y \textbf{dy} a \textbf{Speed} (velocidad angular $\dot{y}$, derivada de la posición $y$). Para enviar los datos a \textbf{Simulation Data Inspector}\footnote{El Data Inspector será la herramienta que usaremos para visualizar y medir los ensayos.}, haz clic en cada línea hasta que se resalte en azul y pulsa el segundo icono, con forma de señal Wi-Fi (\textbf{Log Selected Signal}). Repite el registro en las tres líneas.
 \par\begingroup\centering
 \includegraphics[width=0.78\linewidth]{figuras/registro_senales.png}\par
 {\small Los tres iconos azules indican que el registro está activo. Las líneas registradas son \texttt{u}, \texttt{y} y \texttt{dy}.}\par
@@ -105,7 +105,7 @@ La \textbf{característica estática} es la curva que relaciona cada orden PWM c
 \begin{enumerate}
 \item En \textbf{Edit}, fija \texttt{u} en $-255$ para la primera medida. Después, aumenta \texttt{u} siguiendo este vector en orden: $-255$, $-200$, $-150$, $-100$, $-50$, $0$, $50$, $100$, $150$, $200$ y $255$. Los límites de la zona muerta se miden por separado en el ensayo 2.
 \item \textbf{Cada vez que cambies \texttt{u}, espera a que se estabilice \texttt{dy}.} El cambio de PWM produce un transitorio. Después, el ruido sigue presente, pero la velocidad fluctúa alrededor de un nivel medio sin tendencia a subir ni bajar. Mantén cada PWM al menos un segundo más una vez alcanzado ese régimen.
-\item En \textbf{Data Inspector}, muestra \texttt{dy} arriba y \texttt{u} abajo con el mismo eje de tiempo. Para cada tramo de PWM constante, descarta el transitorio y delimita con los cursores al menos un segundo de régimen permanente. Lee el mínimo y el máximo de \texttt{dy} en ese intervalo y calcula $\omega_{\mathrm{ss}}=(\omega_{\min}+\omega_{\max})/2$, con sus signos y en grados por segundo. Si no hay un tramo estable, repite ese nivel.
+\item En \textbf{Data Inspector}, muestra \texttt{dy} arriba y \texttt{u} abajo con el mismo eje de tiempo. Para cada tramo de PWM constante, descarta el transitorio y delimita con los cursores al menos un segundo de régimen permanente. Lee el mínimo y el máximo de \texttt{dy} en ese intervalo y calcula $\dot{y}_{\mathrm{ss}}=(\dot{y}_{\min}+\dot{y}_{\max})/2$, con sus signos y en grados por segundo. Si no hay un tramo estable, repite ese nivel.
 \end{enumerate}
 
 {\centering
@@ -127,7 +127,7 @@ Añade cada límite que hayas medido, con su velocidad correspondiente, antes de
 \begin{tikzpicture}[x=1cm,y=0.62cm]
 \fill[isa!12] (-1.2,-2) rectangle (1.3,2);
 \draw[->] (-5,0)--(5,0) node[right] {PWM $u$};
-\draw[->] (0,-2.2)--(0,2.5) node[above] {$\omega_{\mathrm{ss}}$};
+\draw[->] (0,-2.2)--(0,2.5) node[above] {$\dot{y}_{\mathrm{ss}}$};
 \draw[very thick,isa] (-4.4,-1.8)--(-1.2,0)--(1.3,0)--(4.4,1.8);
 \draw[dashed] (-1.2,0)--(-1.2,-1.8) node[below] {$Z_n$};
 \draw[dashed] (1.3,0)--(1.3,-1.8) node[below] {$Z_p$};
@@ -182,30 +182,78 @@ ylabel('Velocidad en regimen permanente (grados/s)')
 
 \newpage
 \section*{\color{isa} 3. Elegir el punto de trabajo}
-Elige una rama de \textbf{velocidades positivas o negativas}. Dentro de ella, escoge un PWM $u_0$ donde el giro sea estable y la curva aproximadamente lineal. Anota $u_0$ y su velocidad media $\omega_0$.
+Elige una rama de \textbf{velocidades positivas o negativas}. Dentro de ella, escoge un PWM $u_0$ donde el giro sea estable y la curva aproximadamente lineal. Anota $u_0$ y su velocidad media $\dot{y}_0$.
 
 Elige un segundo PWM $u_1$ en el mismo tramo. Comprueba en la curva que \textbf{todo el intervalo entre $u_0$ y $u_1$ queda en la misma rama y fuera de la zona muerta}. La diferencia $\Delta u=u_1-u_0$ debe producir un cambio de velocidad que se distinga del ruido. Anota ambos niveles y justifica la elección con tu gráfica.
 
 \section*{\color{isa} 4. Identificar con un escalón local}
-\textbf{Muestreo.} Arduino envía una medida cada 0,01 s (100 Hz). Conserva la configuración de muestreo del modelo. Reducir el paso del solver no añade medidas nuevas del motor.
 \begin{enumerate}
-\item Usa un bloque \textbf{Step}. Configura \textbf{Initial value} en $u_0$ y \textbf{Final value} en $u_1$. Empieza con \textbf{Step time} de 0,5 s y \textbf{Stop Time} de 1 s. Si no se distinguen los tramos estables antes y después del escalón, amplía el ensayo a 2 o 3 s y ajusta el instante del escalón según el tramo que necesites alargar.
-\item En Data Inspector, guarda la orden y la velocidad. Mide las velocidades medias $\omega_0$ y $\omega_1$ en los tramos estables anterior y posterior. Calcula $K=(\omega_1-\omega_0)/(u_1-u_0)$.
-\item Calcula $\omega_{63}=\omega_0+0{,}632(\omega_1-\omega_0)$. Mide $\tau$ desde el instante del escalón hasta que la velocidad alcanza ese nivel. Usa $G_\omega(s)=K/(1+\tau s)$ para describir los cambios de velocidad alrededor del punto de trabajo.
+\item Sustituye \textbf{Constant} por \textbf{Step}. Configura \textbf{Initial value} en $u_0$, \textbf{Final value} en $u_1$, \textbf{Step time} en 1 s y \textbf{Stop Time} en 3 s. El motor parte del reposo. Durante el primer segundo, la orden $u_0$ permite que la velocidad alcance su régimen permanente antes del escalón.
+\par{\centering
+\includegraphics[width=0.67\linewidth]{figuras/bloque_escalon.png}\par
+{\small Bloque \textbf{Step} conectado a la entrada PWM de \texttt{Motor\_CC}.}\par}
+\item En Data Inspector, mide $\dot{y}_0$ en el tramo estable justo antes de 1 s. Mide $\dot{y}_1$ \textbf{una vez alcanzado el régimen permanente}, en un tramo estable lo más próximo posible a 3 s. Calcula la ganancia estática y anota el resultado.
+\[
+\boxed{\displaystyle K=\frac{\dot{y}_1-\dot{y}_0}{u_1-u_0}
+       =\;\rule{2cm}{0.4pt}\;\frac{\mathrm{grados/s}}{\mathrm{unidad\ de\ PWM}}}
+\]
+\item Mide el retardo $L$ desde el escalón ($t_0$) hasta que empieza a cambiar la velocidad de forma sostenida. Calcula $\dot{y}_{63}=\dot{y}_0+0{,}632(\dot{y}_1-\dot{y}_0)$ y mide cuándo se alcanza ese nivel ($t_{63}$). La constante de tiempo se mide desde el inicio de la respuesta, descontando el retardo.
+\[
+\boxed{L=\rule{1.4cm}{0.4pt}\;\mathrm{s}
+\qquad \tau=t_{63}-t_0-L=\rule{1.4cm}{0.4pt}\;\mathrm{s}}
+\]
 \end{enumerate}
+Si la respuesta tiene un punto de inflexión claro, también puedes usar la tangente del esquema. $L$ va desde el escalón hasta el cruce con el nivel inicial. $T$, la estimación de $\tau$ por este método, va de ese cruce al del nivel final.
+
 \begin{center}
-\begin{tikzpicture}[x=1cm,y=0.55cm]
-\draw[->] (0,0)--(9,0) node[right] {$t$};
-\draw[->] (0,0)--(0,3.2) node[above] {$\omega$};
-\draw[thick,isa] (0,0.7)--(2,0.7) plot[domain=2:8.5,samples=40] (\x,{2.6-1.9*exp(-(\x-2)/1.6)});
-\draw[dashed] (0,2.6) node[left] {$\omega_1$} --(8.5,2.6);
-\node[left] at (0,0.7) {$\omega_0$};
-\draw[dashed] (0,1.9) node[left] {$\omega_{63}$} --(3.6,1.9)--(3.6,0);
-\draw[dashed] (2,0)--(2,0.7);
-\draw[<->] (2,-0.35)--(3.6,-0.35) node[midway,below] {$\tau$};
+\begin{tikzpicture}[x=1.36cm,y=0.76cm]
+\draw[dashed] (1.8,0)--(1.8,3.8);
+\draw[->] (0,0)--(10.2,0) node[right] {$t$};
+\draw[->] (0,0)--(0,2.3) node[left] {$u(t)$ (PWM)};
+\draw[dashed,gray] (0,1.8) node[left,black] {$u_1$} --(1.8,1.8);
+\node[left] at (0,0.55) {$u_0$};
+\draw[very thick,isa] (0,0.55)--(1.8,0.55)--(1.8,1.8)--(10,1.8);
+\node[below] at (1.8,0) {$t_0$};
+\begin{scope}[yshift=2.2cm]
+\draw[->] (0,0)--(10.2,0) node[right] {$t$};
+\draw[->] (0,0)--(0,4.65) node[left] {$\dot{y}(t)$};
+\draw[dashed,gray] (0,1) node[left,black] {$\dot{y}_0$} --(10,1);
+\draw[dashed,gray] (0,4) node[left,black] {$\dot{y}_1$} --(10,4);
+\draw[very thick,isa] plot[domain=0:10,samples=80] (\x,{1+3/(1+exp(-1.25*(\x-4)))});
+\draw[red!75!black,dashed,thick] (2.4,1)--(5.95,4.328);
+\fill (4,2.5) circle (1.8pt);
+\fill (5.6,4) circle (1.8pt);
+\draw[dashed,gray] (2.4,0)--(2.4,1) (5.6,0)--(5.6,4);
+\draw[<->,red!75!black] (1.8,0.42)--(2.4,0.42) node[midway,above] {$L$};
+\draw[<->,red!75!black] (2.4,0.42)--(5.6,0.42) node[midway,above] {$T$};
+\draw[very thick,isa] (6.25,2.55)--(6.85,2.55) node[right,black] {\small Respuesta $\dot{y}(t)$};
+\draw[red!75!black,dashed,thick] (6.25,2.05)--(6.85,2.05) node[right,black] {\small Tangente en la inflexión};
+\draw[dashed,gray] (6.25,1.55)--(6.85,1.55) node[right,black] {\small Nivel final $\dot{y}_1$};
+\end{scope}
 \end{tikzpicture}\par
-\small Figura 2. Medida de $\tau$ en una respuesta esquemática a un escalón creciente.
+\small Figura 2. Escalón de PWM y respuesta de velocidad. Método de la tangente.
 \end{center}
 
-\textbf{Entrega.} En la memoria, distingue el barrido completo y el ensayo fino. Incluye la curva estática con la zona muerta, justificación de $u_0$ y $u_1$, gráfica del escalón con $\omega_{63}$ y $\tau$ marcados, estimaciones de $K$ y $\tau$ y archivos \texttt{.mat}.
+{\centering
+\includegraphics[width=0.73\linewidth]{figuras/escalon_data_inspector.png}\par
+{\small Figura 3. Ensayo en Data Inspector. La orden \texttt{u} pasa de 50 a 150 y la velocidad \texttt{dy} se estabiliza antes y después del escalón.}\par}
+
+\newpage
+\section*{\color{isa} 5. Comparar el modelo con el motor real}
+El modelo identificado relaciona el incremento de PWM $\Delta u=u-u_0$ con el incremento de velocidad $\Delta\dot{y}=\dot{y}-\dot{y}_0$. En el ensayo de ejemplo se aplicó un escalón desde el punto de trabajo $u_0=50$ hasta el valor final $u_1=150$ (unidades de PWM). Se obtuvo $K=8{,}855$ grados/s por unidad de PWM, $\tau=0{,}06$ s y $L=0{,}02$ s.
+
+\begin{enumerate}
+\item Conecta el mismo \textbf{Step} al motor y a la rama del modelo. En esa rama, usa \textbf{Transport Delay} para aplicar el retardo $L$ y un bloque \textbf{Sum} para restar $u_0$. Si colocas el retardo antes de la resta, configura su salida inicial en $u_0$. La captura lo coloca después de la resta, con salida inicial cero. En \textbf{Transfer Fcn}, usa \texttt{[K]} como numerador y \texttt{[tau 1]} como denominador.
+\item Suma $\dot{y}_0$ a la salida del modelo para recuperar la velocidad en la escala del motor real. Llama \texttt{dym} a la línea que sale de esa suma y activa su registro con el icono de la antena (\textbf{Log Selected Signal}). En la captura, \texttt{uo} representa $u_0$ y \texttt{yo} representa $\dot{y}_0$.
+\end{enumerate}
+{\centering
+\includegraphics[width=0.89\linewidth]{figuras/modelo_validacion.png}\par
+{\small Figura 4. El mismo escalón alimenta al motor real y a la rama del modelo.}\par}
+\begin{enumerate}[resume]
+\item Repite el ensayo con el escalón a 1 s, los mismos $u_0$ y $u_1$ y \textbf{Stop Time} de 3 s. En Data Inspector, superpone \texttt{dy} y \texttt{dym} arriba y deja \texttt{u} abajo. Compara el transitorio y los niveles estables con el ejemplo. Antes del escalón, el motor acelera desde el reposo y el modelo parte de $\dot{y}_0$.
+\end{enumerate}
+{\centering
+\includegraphics[width=0.63\linewidth]{figuras/comparacion_validacion.png}\par
+{\small Figura 5. Velocidades real y del modelo superpuestas, con el PWM debajo.}\par}
+
 \end{document}
